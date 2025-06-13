@@ -1089,3 +1089,12 @@ def test_upload_large_model_file(
     mv = client.get_model_artifact(name="large_test_model", version=version)
     assert mv
     assert mv.name == "large_test_model"
+
+
+@pytest.mark.wip
+def test_start_experiment(client: ModelRegistry):
+    with client.start_experiment_run(
+        experiment_name="TestExp1", experiment_id="150"
+    ) as run:
+        run.log_param("r", 5)
+        run.log_metric("kurtosis", 0.5)

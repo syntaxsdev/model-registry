@@ -10,7 +10,7 @@ Todo:
     * Move part of the description to API Reference docs (#120).
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: I001
 
 from abc import ABC, abstractmethod
 from typing import Any, TypeVar
@@ -22,6 +22,8 @@ from mr_openapi import (
 )
 from mr_openapi import (
     ArtifactState,
+    ArtifactCreate,
+    ArtifactUpdate,
     ModelArtifactCreate,
     ModelArtifactUpdate,
 )
@@ -214,3 +216,67 @@ class ModelArtifact(Artifact):
             if source.custom_properties
             else None,
         )
+
+
+class ExperimentRunArtifact(DocArtifact):
+    """Represents an experiment run artifact.
+
+    Attributes:
+        name: Name of the experiment run artifact.
+        uri: URI of the experiment run artifact.
+        description: Description of the experiment run artifact.
+        external_id: Customizable ID. Has to be unique among instances of the same type.
+    """
+    # value: Any | None = None
+    # step: int | None = None
+
+    # @override
+    # def create(self, **kwargs) -> ArtifactCreate:
+    #     """Create a new ExperimentRunArtifact object."""
+    #     return ArtifactCreate(
+    #         customProperties=self._map_custom_properties(),
+    #         **self._props_as_dict(exclude=("id", "custom_properties")),
+    #         artifactType="model-artifact",
+    #         **kwargs,
+    #     )
+
+    # @override
+    # def update(self, **kwargs) -> ArtifactUpdate:
+    #     """Update an ExperimentRunArtifact object."""
+    #     return ArtifactUpdate(
+    #         customProperties=self._map_custom_properties(),
+    #         **self._props_as_dict(exclude=("id", "name", "custom_properties")),
+    #         artifactType="model-artifact",
+    #         **kwargs,
+    #     )
+
+    # @override
+    # def as_basemodel(self) -> ArtifactBaseModel:
+    #     return ArtifactBaseModel(
+    #         customProperties=self._map_custom_properties(),
+    #         **self._props_as_dict(exclude=("custom_properties")),
+    #         artifactType="model-artifact",
+    #     )
+
+    # @classmethod
+    # @override
+    # def from_basemodel(cls, source: ModelArtifactBaseModel) -> ModelArtifact:
+    #     """Create a new ModelArtifact object from a BaseModel object."""
+    #     assert source.name
+    #     assert source.uri
+    #     assert source.state
+    #     return cls(
+    #         id=source.id,
+    #         name=source.name,
+    #         description=source.description,
+    #         external_id=source.external_id,
+    #         create_time_since_epoch=source.create_time_since_epoch,
+    #         last_update_time_since_epoch=source.last_update_time_since_epoch,
+    #         uri=source.uri,
+    #         custom_properties=cls._unmap_custom_properties(source.custom_properties)
+    #         if source.custom_properties
+    #         else None,
+    #     )
+    @override
+    def __str__(self) -> str:
+        return f"ExperimentRunArtifact ({self.name}) => ({self.custom_properties["value"]})"
