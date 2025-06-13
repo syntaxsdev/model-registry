@@ -9,12 +9,15 @@ import os
 from collections.abc import Coroutine, Mapping
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Callable, TypeVar, Union, get_args
+from typing import Any, Awaitable, Callable, ContextManager, TypeVar, Union, get_args
 from warnings import warn
 
+from ._experiments import ActiveExperimentRun
 from .core import ModelRegistryAPIClient
 from .exceptions import StoreError
 from .types import (
+    Experiment,
+    ExperimentRun,
     ListOptions,
     ModelArtifact,
     ModelVersion,
@@ -31,7 +34,7 @@ from .utils import (
     save_to_oci_registry,
 )
 
-ModelTypes = Union[RegisteredModel, ModelVersion, ModelArtifact]
+ModelTypes = Union[RegisteredModel, ModelVersion, ModelArtifact, Experiment]
 TModel = TypeVar("TModel", bound=ModelTypes)
 
 logging.basicConfig(
@@ -146,7 +149,7 @@ class ModelRegistry:
             )
         self.get_registered_models().page_size(1)._next_page()
 
-    def async_runner(self, coro: Any) -> Any:
+    def async_runner(self, coro: Awaitable[TModel]) -> TModel:
         if hasattr(self, "_user_async_runner"):
             return self._user_async_runner(coro)
 
@@ -619,3 +622,53 @@ class ModelRegistry:
             region=region,
             transfer_config=transfer_config,
         )
+
+    @contextlib.contextmanager
+    def start_experiment_run(
+        self,
+        experiment_name: str,
+        experiment_id: str | None = None,
+        run_name: str | None = None,
+    ) -> ContextManager[ActiveExperimentRun]:
+        """Start an experiment run.
+
+        Args:
+            experiment_name: Name of the experiment.
+            experiment_id: ID of the experiment.
+
+        Returns:
+            Experiment run.
+        """
+        # Create or retrieve the experiment
+        if not (
+            exp := self.async_runner(self._api.get_experiment_by_name(experiment_name))
+        ):
+            exp = self.async_runner(
+                self._api.upsert_experiment(
+                    Experiment(name=experiment_name, external_id=experiment_id)
+                )
+            )
+            print(f"Experiment {experiment_name} created with id {exp.id}")
+
+        # Create the experiment run
+        # if not (
+        #     exp := self.async_runner(self._api.get_experiment_run_by_name(experiment_name))
+        # ):
+        exp_run = self.async_runner(
+            self._api.upsert_experiment_run(
+                ExperimentRun(experiment_id=exp.id, name=run_name)
+            )
+        )
+
+        exp_run = ActiveExperimentRun(exp)
+        # return exp_run
+        try:
+            # Return the active experiment run
+            yield exp_run
+        except Exception as e:
+            print(f"Error creating active experiment run: {e}")
+            raise e
+        finally:
+            run_logs = exp_run.get_logs()
+            for log in run_logs:
+                self.async_runner(self._api.upsert_experiment_run_artifact(log))

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import TypeVar, cast
 
 from typing_extensions import overload
@@ -21,6 +21,9 @@ from mr_openapi import (
 from ._utils import required_args
 from .types import (
     Artifact,
+    Experiment,
+    ExperimentRun,
+    ExperimentRunArtifact,
     ListOptions,
     ModelArtifact,
     ModelVersion,
@@ -35,6 +38,7 @@ class ModelRegistryAPIClient:
     """Model registry API."""
 
     config: Configuration
+    # experiments: dict[str, Experiment] = field(default_factory=dict)
 
     @classmethod
     def secure_connection(
@@ -78,7 +82,11 @@ class ModelRegistryAPIClient:
             user_token: The PEM-encoded user token as a string.
         """
         return cls(
-            Configuration(host=f"{server_address}:{port}", access_token=user_token, verify_ssl=False)
+            Configuration(
+                host=f"{server_address}:{port}",
+                access_token=user_token,
+                verify_ssl=False,
+            )
         )
 
     @asynccontextmanager
@@ -462,3 +470,111 @@ class ModelRegistryAPIClient:
         if options:
             options.next_page_token = art_list.next_page_token
         return [Artifact.validate_artifact(art) for art in art_list.items or []]
+
+    async def upsert_experiment(self, experiment: Experiment) -> Experiment:
+        """Upsert an experiment.
+
+        Updates or creates an experiment on the server.
+
+        Args:
+            experiment: Experiment to upsert.
+        """
+        async with self.get_client() as client:
+            if experiment.id:
+                exp = await client.update_experiment(experiment.id, experiment.update())
+            else:
+                exp = await client.create_experiment(experiment.create())
+
+        return Experiment.from_basemodel(exp)
+
+    async def get_experiment_by_name(self, name: str) -> Experiment | None:
+        """Fetch an experiment by its name.
+
+        Args:
+            name: Experiment name.
+        """
+        async with self.get_client() as client:
+            try:
+                exp = await client.get_experiments()
+                for e in exp.items or []:
+                    if e.name == name:
+                        return Experiment.from_basemodel(e)
+            except mr_exceptions.NotFoundException:
+                return None
+        return None
+
+    async def get_experiment_by_id(self, id: str) -> Experiment | None:
+        """Fetch an experiment by its ID.
+
+        Args:
+            id: Experiment ID.
+        """
+        async with self.get_client() as client:
+            try:
+                exp = await client.get_experiment(id)
+            except mr_exceptions.NotFoundException:
+                return None
+
+        return RegisteredModel.from_basemodel(exp)
+
+    async def upsert_experiment_run(
+        self, experiment_run: ExperimentRun
+    ) -> ExperimentRun:
+        """Upsert an experiment run.
+
+        Updates or creates an experiment run on the server.
+
+        Args:
+            experiment_run: Experiment run to upsert.
+        """
+        async with self.get_client() as client:
+            if experiment_run.id:
+                exp_run = await client.create_experiment_run(
+                    experiment_run.id, experiment_run.update()
+                )
+            else:
+                exp_run = await client.create_experiment_run(experiment_run.create())
+
+        return ExperimentRun.from_basemodel(exp_run)
+
+
+    # TODO: Implement this
+    # async def get_experiment_runs_by_experiment_id(
+    #     self, experiment_id: str
+    # ) -> list[ExperimentRun]:
+    #     """Upsert an experiment run.
+
+    #     Updates or creates an experiment run on the server.
+
+    #     Args:
+    #         experiment_run: Experiment run to upsert.
+    #     """
+    #     async with self.get_client() as client:
+    #         if experiment_run.id:
+    #             exp_run = await client.create_experiment_run(
+    #                 experiment_run.id, experiment_run.update()
+    #             )
+    #         else:
+    #             exp_run = await client.create_experiment_run(experiment_run.create())
+
+    #     return ExperimentRun.from_basemodel(exp_run)
+
+    async def upsert_experiment_run_artifact(
+        self, artifact: ExperimentRunArtifact
+    ) -> ExperimentRunArtifact:
+        """Upsert an experiment run.
+
+        Updates or creates an experiment run on the server.
+
+        Args:
+            experiment_run: Experiment run to upsert.
+        """
+        async with self.get_client() as client:
+            if artifact.id:
+                exp_run = await client.upsert_experiment_run_artifact(
+                    experimentrun_id=artifact.id, artifact=artifact.update()
+                )
+            else:
+                exp_run = await client.create_experiment_run(artifact.create())
+
+        return ExperimentRunArtifact.from_basemodel(exp_run)
