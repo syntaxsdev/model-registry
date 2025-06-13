@@ -20,11 +20,13 @@ func StringToInt64(id *string) (*int64, error) {
 		return nil, nil
 	}
 
-	idAsInt, err := strconv.ParseInt(*id, 10, 64)
+	idAsInt, err := strconv.Atoi(*id)
 	if err != nil {
 		return nil, fmt.Errorf("invalid numeric string: %v", err)
 	}
-	return &idAsInt, nil
+
+	idInt64 := int64(idAsInt)
+	return &idInt64, nil
 }
 
 // Int64ToString converts numeric id to string-based one
@@ -39,12 +41,13 @@ func Int64ToString(id *int64) *string {
 
 // StringToInt32 converts string-based numeric value (a OpenAPI string literal consisting only of digits) to int32 if numeric, otherwise return error
 func StringToInt32(idString string) (int32, error) {
-	idInt, err := strconv.ParseInt(idString, 10, 32)
+	idInt, err := strconv.Atoi(idString)
 	if err != nil {
 		return 0, err
 	}
 
-	return int32(idInt), nil
+	idInt32 := int32(idInt)
+	return idInt32, nil
 }
 
 // MapOpenAPICustomProperties maps OpenAPI custom properties model to MLMD one
@@ -345,7 +348,7 @@ func MapDocArtifactName(source *OpenAPIModelWrapper[openapi.DocArtifact]) *strin
 	if (*source).Model.Name != nil {
 		artifactName = *(*source).Model.Name
 	} else {
-		return nil // ignore name for updates
+		artifactName = uuid.New().String()
 	}
 	return of(PrefixWhenOwned(source.ParentResourceId, artifactName))
 }
@@ -452,180 +455,9 @@ func MapModelArtifactName(source *OpenAPIModelWrapper[openapi.ModelArtifact]) *s
 	if (*source).Model.Name != nil {
 		artifactName = *(*source).Model.Name
 	} else {
-		return nil // ignore name for updates
+		artifactName = uuid.New().String()
 	}
 	return of(PrefixWhenOwned(source.ParentResourceId, artifactName))
-}
-
-// DATA SET
-
-func MapDataSetType(_ *openapi.DataSet) *string {
-	return of(defaults.DataSetTypeName)
-}
-
-// maps the user-provided name into MLMD one, i.e., prefixing it with either the parent resource id or a generated
-// uuid. If not provided, autogenerate the name itself
-func MapDataSetName(source *OpenAPIModelWrapper[openapi.DataSet]) *string {
-	// openapi.Artifact is defined with optional name, so build arbitrary name for this artifact if missing
-	var artifactName string
-	if (*source).Model.Name != nil {
-		artifactName = *(*source).Model.Name
-	} else {
-		return nil // ignore name for updates
-	}
-	return of(PrefixWhenOwned(source.ParentResourceId, artifactName))
-}
-
-func MapDataSetProperties(source *openapi.DataSet) (map[string]*proto.Value, error) {
-	props := make(map[string]*proto.Value)
-	if source != nil {
-		if source.Description != nil {
-			props["description"] = &proto.Value{
-				Value: &proto.Value_StringValue{
-					StringValue: *source.Description,
-				},
-			}
-		}
-		if source.Digest != nil {
-			props["digest"] = &proto.Value{
-				Value: &proto.Value_StringValue{
-					StringValue: *source.Digest,
-				},
-			}
-		}
-		if source.SourceType != nil {
-			props["source_type"] = &proto.Value{
-				Value: &proto.Value_StringValue{
-					StringValue: *source.SourceType,
-				},
-			}
-		}
-		if source.Source != nil {
-			props["source"] = &proto.Value{
-				Value: &proto.Value_StringValue{
-					StringValue: *source.Source,
-				},
-			}
-		}
-		if source.Schema != nil {
-			props["schema"] = &proto.Value{
-				Value: &proto.Value_StringValue{
-					StringValue: *source.Schema,
-				},
-			}
-		}
-		if source.Profile != nil {
-			props["profile"] = &proto.Value{
-				Value: &proto.Value_StringValue{
-					StringValue: *source.Profile,
-				},
-			}
-		}
-	}
-	return props, nil
-}
-
-// METRIC
-
-func MapMetricType(_ *openapi.Metric) *string {
-	return of(defaults.MetricTypeName)
-}
-
-// maps the user-provided name into MLMD one, i.e., prefixing it with parent resource id.
-func MapMetricName(source *OpenAPIModelWrapper[openapi.Metric]) *string {
-	var artifactName string
-	if (*source).Model.Name != nil {
-		artifactName = *(*source).Model.Name
-	} else {
-		return nil // ignore name for updates
-	}
-	return of(PrefixWhenOwned(source.ParentResourceId, artifactName))
-}
-
-func MapMetricProperties(source *openapi.Metric) (map[string]*proto.Value, error) {
-	props := make(map[string]*proto.Value)
-	if source != nil {
-		if source.Description != nil {
-			props["description"] = &proto.Value{
-				Value: &proto.Value_StringValue{
-					StringValue: *source.Description,
-				},
-			}
-		}
-		// Value is required
-		if source.Value == nil {
-			return nil, fmt.Errorf("missing required Value field")
-		}
-		props["value"] = &proto.Value{
-			Value: &proto.Value_DoubleValue{
-				DoubleValue: *source.Value,
-			},
-		}
-		if source.Timestamp != nil {
-			props["timestamp"] = &proto.Value{
-				Value: &proto.Value_StringValue{
-					StringValue: *source.Timestamp,
-				},
-			}
-		}
-		if source.Step != nil {
-			props["step"] = &proto.Value{
-				Value: &proto.Value_IntValue{
-					IntValue: *source.Step,
-				},
-			}
-		}
-	}
-	return props, nil
-}
-
-// PARAMETER
-
-func MapParameterType(_ *openapi.Parameter) *string {
-	return of(defaults.ParameterTypeName)
-}
-
-// maps the user-provided name into MLMD one, i.e., prefixing it with parent resource id.
-func MapParameterName(source *OpenAPIModelWrapper[openapi.Parameter]) *string {
-	var artifactName string
-	if (*source).Model.Name != nil {
-		artifactName = *(*source).Model.Name
-	} else {
-		return nil // ignore name for updates
-	}
-	return of(PrefixWhenOwned(source.ParentResourceId, artifactName))
-}
-
-func MapParameterProperties(source *openapi.Parameter) (map[string]*proto.Value, error) {
-	props := make(map[string]*proto.Value)
-	if source != nil {
-		if source.Description != nil {
-			props["description"] = &proto.Value{
-				Value: &proto.Value_StringValue{
-					StringValue: *source.Description,
-				},
-			}
-		}
-		// Value is required
-		if source.Value == nil {
-			return nil, fmt.Errorf("missing required Value field")
-		}
-		props["value"] = &proto.Value{
-			Value: &proto.Value_StringValue{
-				StringValue: *source.Value,
-			},
-		}
-		// ParameterType is required
-		if source.ParameterType == nil {
-			return nil, fmt.Errorf("missing required ParameterType field")
-		}
-		props["parameter_type"] = &proto.Value{
-			Value: &proto.Value_StringValue{
-				StringValue: string(*source.ParameterType),
-			},
-		}
-	}
-	return props, nil
 }
 
 // SERVING ENVIRONMENT
@@ -893,26 +725,30 @@ func MapExperimentRunProperties(source *openapi.ExperimentRun) (map[string]*prot
 		}
 
 		if source.StartTimeSinceEpoch != nil {
+			value, err := strconv.ParseInt(*source.StartTimeSinceEpoch, 10, 64)
+			if err != nil {
+				return nil, fmt.Errorf("invalid start time since epoch: %w", err)
+			}
 			props["start_time_since_epoch"] = &proto.Value{
-				Value: &proto.Value_StringValue{
-					StringValue: *source.StartTimeSinceEpoch,
+				Value: &proto.Value_IntValue{
+					IntValue: value,
 				},
 			}
 		}
 
 		if source.EndTimeSinceEpoch != nil {
+			value, err := strconv.ParseInt(*source.EndTimeSinceEpoch, 10, 64)
+			if err != nil {
+				return nil, fmt.Errorf("invalid end time since epoch: %w", err)
+			}
 			props["end_time_since_epoch"] = &proto.Value{
-				Value: &proto.Value_StringValue{
-					StringValue: *source.EndTimeSinceEpoch,
+				Value: &proto.Value_IntValue{
+					IntValue: value,
 				},
 			}
 		}
 	}
 	return props, nil
-}
-
-func GenerateNewName() *string {
-	return of(uuid.New().String())
 }
 
 // of returns a pointer to the provided literal/const input

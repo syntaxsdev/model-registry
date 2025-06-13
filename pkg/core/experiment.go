@@ -149,7 +149,7 @@ func (serv *ModelRegistryService) GetExperimentByParams(name *string, externalId
 	}
 
 	if len(resp.Contexts) == 0 {
-		return nil, fmt.Errorf("no experiment found for provided parameters: %w", api.ErrNotFound)
+		return nil, api.ErrNotFound
 	}
 
 	result, err := serv.mapper.MapToExperiment(resp.Contexts[0])

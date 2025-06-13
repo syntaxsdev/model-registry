@@ -11,7 +11,4 @@ const (
 	ServeModelTypeName         = "kf.ServeModel"
 	ExperimentTypeName         = "kf.Experiment"
 	ExperimentRunTypeName      = "kf.ExperimentRun"
-	DataSetTypeName            = "kf.DataSet"
-	MetricTypeName             = "kf.Metric"
-	ParameterTypeName          = "kf.Parameter"
 )
