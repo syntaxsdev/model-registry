@@ -1,80 +1,78 @@
-from typing import Any
+from contextlib import AbstractContextManager
+from dataclasses import dataclass, field
+from typing import Any, Callable
 
-from model_registry.types.artifacts import ExperimentRunArtifact
+from model_registry.core import ModelRegistryAPIClient
+from model_registry.types.artifacts import (
+    ExperimentRunArtifact,
+    ExperimentRunArtifactTypes,
+)
 from model_registry.types.experiments import ExperimentRun
 
+# @dataclass
+# class ExperimentRunContext:
+#     experiment_run: ExperimentRun
+#     api: ModelRegistryAPIClient
+#     async_runner: Callable
 
-class RunInfo:
+
+class ActiveExperimentRun(AbstractContextManager):
     def __init__(
         self,
-        run_id: str,
-        experiment_id: str,
-        user_id: str,
-        status: str,
-        start_time: str,
-        end_time: str,
-        stage: str,
-        run_name: str,
+        experiment_run: ExperimentRun,
+        api: ModelRegistryAPIClient,
+        async_runner: Callable,
     ):
-        self.run_id = run_id
-        self.experiment_id = experiment_id
-        self.user_id = user_id
-        self.start_time = start_time
-        self.end_time = end_time
-        self.status = status
-        self.stage = stage
-        self.run_name = run_name
-
-
-class Run:
-    def __init__(self):
-        pass
-
-
-class ActiveExperimentRun(Run):
-    def __init__(self, experiment_run: ExperimentRun):
-        Run.__init__(self)
         self.__exp_run = experiment_run
+        self.__api = api
+        self.__async_runner = async_runner
         # temporary solution
-        self._logs: dict[str, dict[str, ExperimentRunArtifact]] = {
-            "params": {},
-            "metrics": {},
-        }
+        self._logs: ExperimentRunArtifactTypes = ExperimentRunArtifactTypes()
 
     def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        pass
+        """Exit the context manager and upsert the logs to the experiment run."""
+        temp_artifacts: ExperimentRunArtifactTypes = ExperimentRunArtifactTypes()
+        for log in self.get_logs():
+            server_log = self.__async_runner(
+                self.__api.upsert_experiment_run_artifact(
+                    experiment_run_id=self.__exp_run.id, artifact=log
+                )
+            )
+            era = ExperimentRunArtifact.from_doc(server_log)
+            temp_artifacts.params[era.name] = era
+        self._logs = temp_artifacts
 
     def log_param(self, key: str, value: Any):
-        # Temporary solution
-        self._logs["params"][key] = ExperimentRunArtifact(
+        """Log a parameter to the experiment run."""
+        self._logs.params[key] = ExperimentRunArtifact(
             name=key,
-            uri=f"params/{key}",
-            custom_properties={"value": value},
+            uri="",
+            custom_properties={key: value},
         )
+
     def log_metric(self, key: str, value: Any):
-        # Temporary solution
-        self._logs["metrics"][key] = ExperimentRunArtifact(
+        """Log a metric to the experiment run."""
+        self._logs.metrics[key] = ExperimentRunArtifact(
             name=key,
-            uri=f"metrics/{key}",
-            custom_properties={"value": value},
+            uri="",
+            custom_properties={key: value},
         )
+
+    def get_log(self, type: str, key: str) -> ExperimentRunArtifact:
+        """Get a log from the experiment run.
+
+        Args:
+            type: Type of the log.
+            key: Key of the log.
+        """
+        return self._logs.__getattribute__(type)[key]
 
     def get_logs(self) -> list[ExperimentRunArtifact]:
-        logs: list[ExperimentRunArtifact] = []
-        for inner_logs in self._logs.values():
-            logs.extend(list(inner_logs.values()))
-        return logs
+        """Return every recorded artifact (params + metrics) in one flat list."""
+        params = self._logs.params.values()
+        metrics = self._logs.metrics.values()
 
-
-class RunStack:
-    def __init__(self):
-        self.stack = []
-
-    def push(self, run: Run):
-        self.stack.append(run)
-
-    def pop(self):
-        return self.stack.pop()
+        return list(params) + list(metrics)

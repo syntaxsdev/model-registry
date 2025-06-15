@@ -81,13 +81,12 @@ class ModelRegistryAPIClient:
             port: Server port.
             user_token: The PEM-encoded user token as a string.
         """
-        return cls(
-            Configuration(
-                host=f"{server_address}:{port}",
-                access_token=user_token,
-                verify_ssl=False,
-            )
+        config = Configuration(
+            host=f"{server_address}:{port}",
+            access_token=user_token,
         )
+        config.verify_ssl = False
+        return cls(config)
 
     @asynccontextmanager
     async def get_client(self) -> AsyncIterator[ModelRegistryServiceApi]:
@@ -503,7 +502,7 @@ class ModelRegistryAPIClient:
                 return None
         return None
 
-    async def get_experiment_by_id(self, id: str) -> Experiment | None:
+    async def get_experiment_by_id(self, id: str | int) -> Experiment | None:
         """Fetch an experiment by its ID.
 
         Args:
@@ -511,7 +510,7 @@ class ModelRegistryAPIClient:
         """
         async with self.get_client() as client:
             try:
-                exp = await client.get_experiment(id)
+                exp = await client.get_experiment(str(id))
             except mr_exceptions.NotFoundException:
                 return None
 
@@ -537,32 +536,130 @@ class ModelRegistryAPIClient:
 
         return ExperimentRun.from_basemodel(exp_run)
 
+    async def get_experiment_runs_by_experiment_id(
+        self, experiment_id: str | int, options: ListOptions | None = None
+    ) -> list[ExperimentRun]:
+        """Fetch experiment runs by experiment ID.
 
-    # TODO: Implement this
-    # async def get_experiment_runs_by_experiment_id(
-    #     self, experiment_id: str
-    # ) -> list[ExperimentRun]:
-    #     """Upsert an experiment run.
+        Args:
+            experiment_run: Experiment run to upsert.
+        """
+        async with self.get_client() as client:
+            try:
+                exp_runs = await client.get_experiment_experiment_runs(
+                    str(experiment_id), **(options or ListOptions()).as_options()
+                )
+            except mr_exceptions.NotFoundException:
+                return []
 
-    #     Updates or creates an experiment run on the server.
+        if options:
+            options.next_page_token = exp_runs.next_page_token
 
-    #     Args:
-    #         experiment_run: Experiment run to upsert.
-    #     """
-    #     async with self.get_client() as client:
-    #         if experiment_run.id:
-    #             exp_run = await client.create_experiment_run(
-    #                 experiment_run.id, experiment_run.update()
-    #             )
-    #         else:
-    #             exp_run = await client.create_experiment_run(experiment_run.create())
+        return [
+            ExperimentRun.from_basemodel(exp_run) for exp_run in exp_runs.items or []
+        ]
 
-    #     return ExperimentRun.from_basemodel(exp_run)
+    async def get_experiment_runs_by_experiment_name(
+        self, experiment_name: str, options: ListOptions | None = None
+    ) -> list[ExperimentRun]:
+        """Fetch experiment runs by experiment name.
+
+        Args:
+            experiment_run: Experiment run to upsert.
+        """
+        async with self.get_client() as client:
+            try:
+                exp = await self.get_experiment_by_name(experiment_name)
+                if not exp:
+                    return []
+                exp_runs = await client.get_experiment_experiment_runs(
+                    str(exp.id), **(options or ListOptions()).as_options()
+                )
+            except mr_exceptions.NotFoundException:
+                return []
+
+        if options:
+            options.next_page_token = exp_runs.next_page_token
+
+        return [
+            ExperimentRun.from_basemodel(exp_run) for exp_run in exp_runs.items or []
+        ]
+
+    async def get_experiment_run_by_experiment_and_run_id(
+        self,
+        run_id: str | int,
+        experiment_name: str | None = None,
+        experiment_id: str | int | None = None,
+        options: ListOptions | None = None,
+    ) -> ExperimentRun:
+        """Fetch experiment runs by experiment name / ID and the run ID.
+
+        Args:
+            run_id: Run ID.
+            experiment_name: Experiment name.
+            experiment_id: Experiment ID.
+            options: Options for listing experiment runs.
+
+        Returns:
+            Experiment run.
+        """
+        async with self.get_client() as client:
+            try:
+                if experiment_name:
+                    exp = await self.get_experiment_by_name(experiment_name)
+                elif experiment_id:
+                    exp = await self.get_experiment_by_id(experiment_id)
+                else:
+                    msg = "Either experiment_name or experiment_id must be provided"
+                    raise ValueError(msg)
+                if not exp:
+                    return None
+
+                exp_run = await client.get_experiment_run(str(run_id))
+            except mr_exceptions.NotFoundException:
+                return None
+
+        return ExperimentRun.from_basemodel(exp_run)
+
+    async def get_experiment_run_by_experiment_and_run_name(
+        self,
+        run_name: str,
+        experiment_name: str | None = None,
+        experiment_id: str | int | None = None,
+        options: ListOptions | None = None,
+    ) -> ExperimentRun:
+        """Fetch experiment runs by experiment name / ID and the run ID.
+
+        Args:
+            run_name: Run name.
+            experiment_name: Experiment name.
+            experiment_id: Experiment ID.
+            options: Options for listing experiment runs.
+
+        Returns:
+            Experiment run.
+        """
+        async with self.get_client() as client:
+            exp = None
+            try:
+                if experiment_name:
+                    exp = await self.get_experiment_by_name(experiment_name)
+                elif experiment_id:
+                    exp = await self.get_experiment_by_id(str(experiment_id))
+
+                if not exp:
+                    return None
+
+                exp_run = await client.get_experiment_run(exp.id)
+            except mr_exceptions.NotFoundException:
+                return None
+
+        return ExperimentRun.from_basemodel(exp_run)
 
     async def upsert_experiment_run_artifact(
-        self, artifact: ExperimentRunArtifact
+        self, experiment_run_id: str, artifact: ExperimentRunArtifact
     ) -> ExperimentRunArtifact:
-        """Upsert an experiment run.
+        """Upsert an experiment run artifact.
 
         Updates or creates an experiment run on the server.
 
@@ -570,11 +667,75 @@ class ModelRegistryAPIClient:
             experiment_run: Experiment run to upsert.
         """
         async with self.get_client() as client:
-            if artifact.id:
-                exp_run = await client.upsert_experiment_run_artifact(
-                    experimentrun_id=artifact.id, artifact=artifact.update()
-                )
-            else:
-                exp_run = await client.create_experiment_run(artifact.create())
+            return cast(
+                ArtifactT,
+                Artifact.validate_artifact(
+                    await client.upsert_experiment_run_artifact(
+                        experimentrun_id=experiment_run_id, artifact=artifact.wrap()
+                    )
+                ),
+            )
 
-        return ExperimentRunArtifact.from_basemodel(exp_run)
+    @overload
+    async def get_artifacts_by_experiment_run_params(self, run_id: str | int): ...
+
+    @overload
+    async def get_artifacts_by_experiment_run_params(
+        self, run_name: str, experiment_name: str | None = None
+    ): ...
+
+    @overload
+    async def get_artifacts_by_experiment_run_params(
+        self, run_name: str, experiment_id: str | int | None = None
+    ): ...
+
+    @required_args(
+        ("run_id",), ("run_name", "experiment_name"), ("run_name", "experiment_id")
+    )
+    async def get_artifacts_by_experiment_run_params(
+        self,
+        run_id: str | int | None = None,
+        run_name: str | None = None,
+        experiment_name: str | None = None,
+        experiment_id: str | int | None = None,
+        options: ListOptions | None = None,
+    ) -> ExperimentRunArtifact:
+        """Fetch a log by experiment run ID and name.
+
+        Args:
+            run_id: Experiment run ID.
+            run_name: Experiment run name.
+            experiment_name: Experiment name.
+            experiment_id: Experiment ID.
+            options: Options for listing experiment run artifacts.
+        """
+        async with self.get_client() as client:
+            try:
+                if not run_id and run_name:
+                    if experiment_name:
+                        exp_runs = await self.get_experiment_runs_by_experiment_name(
+                            experiment_name=experiment_name,
+                        )
+                    elif experiment_id:
+                        exp_runs = await self.get_experiment_runs_by_experiment_id(
+                            experiment_id=experiment_id,
+                        )
+                    else:
+                        msg = "Either experiment_name or experiment_id must be provided"
+                        raise ValueError(msg)
+
+                    run_id = exp_run[0].id
+                    print(run_id)
+
+                if not run_id:
+                    msg = "Could not find experiment run"
+                    raise ValueError(msg)
+                logs = await client.get_experiment_run_artifacts(
+                    str(run_id), **(ListOptions()).as_options()
+                )
+            except mr_exceptions.NotFoundException:
+                return []
+
+        if options:
+            options.next_page_token = logs.next_page_token
+        return [ExperimentRunArtifact.from_basemodel(log) for log in logs.items or []]

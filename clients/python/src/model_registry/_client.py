@@ -32,6 +32,7 @@ from .utils import (
     _s3_creds,
     _upload_to_s3,
     save_to_oci_registry,
+    generate_name,
 )
 
 ModelTypes = Union[RegisteredModel, ModelVersion, ModelArtifact, Experiment]
@@ -623,52 +624,90 @@ class ModelRegistry:
             transfer_config=transfer_config,
         )
 
-    @contextlib.contextmanager
     def start_experiment_run(
         self,
-        experiment_name: str,
+        experiment_name: str | None = None,
         experiment_id: str | None = None,
         run_name: str | None = None,
-    ) -> ContextManager[ActiveExperimentRun]:
+        run_id: str | None = None,
+        *,
+        owner: str | None = None,
+        desc: str | None = None,
+        run_desc: str | None = None,
+    ) -> ActiveExperimentRun:
         """Start an experiment run.
 
         Args:
             experiment_name: Name of the experiment.
             experiment_id: ID of the experiment.
+            run_name: Name of the run.
+            run_id: ID of the run.
+
+        Keyword Args:
+            owner: Owner of the experiment.
+            desc: Description of the experiment.
+            run_desc: Description of the run.
 
         Returns:
             Experiment run.
         """
+        # Ensure argument pairs are provided
+        if not any([experiment_name, experiment_id]):
+            msg = "Either experiment_name or experiment_id must be provided"
+            raise ValueError(msg)
+
         # Create or retrieve the experiment
-        if not (
-            exp := self.async_runner(self._api.get_experiment_by_name(experiment_name))
-        ):
+        if experiment_name:
+            exp = self.async_runner(self._api.get_experiment_by_name(experiment_name))
+        elif experiment_id:
+            exp = self.async_runner(self._api.get_experiment_by_id(experiment_id))
+        else:
+            msg = "Either experiment_name or experiment_id must be provided"
+            raise ValueError(msg)
+
+        # Create the experiment if it doesn't exist
+        if not exp:
             exp = self.async_runner(
                 self._api.upsert_experiment(
-                    Experiment(name=experiment_name, external_id=experiment_id)
+                    Experiment(
+                        name=experiment_name or generate_name("experiment"),
+                        owner=owner,
+                    )
                 )
             )
-            print(f"Experiment {experiment_name} created with id {exp.id}")
+            print(f"Experiment {experiment_name} created with ID: {exp.id}")
 
-        # Create the experiment run
-        # if not (
-        #     exp := self.async_runner(self._api.get_experiment_run_by_name(experiment_name))
-        # ):
-        exp_run = self.async_runner(
-            self._api.upsert_experiment_run(
-                ExperimentRun(experiment_id=exp.id, name=run_name)
+        # Create or reuse the experiment run
+        exp_run_args = {
+            "experiment_name": experiment_name,
+            "experiment_id": exp.id,
+        }
+        if run_name:
+            exp_run = self.async_runner(
+                self._api.get_experiment_run_by_experiment_and_run_name(
+                    run_id=run_id,
+                    **exp_run_args,
+                )
             )
-        )
+        elif run_id:
+            exp_run = self.async_runner(
+                self._api.get_experiment_run_by_experiment_and_run_id(
+                    run_id=run_id,
+                    **exp_run_args,
+                )
+            )
+        else:
+            exp_run = self.async_runner(
+                self._api.upsert_experiment_run(
+                    ExperimentRun(
+                        experiment_id=exp.id,
+                        name=generate_name("run"),
+                        description=run_desc,
+                    )
+                )
+            )
+            print(f"Experiment Run {exp_run.name} created with ID: {exp_run.id}")
 
-        exp_run = ActiveExperimentRun(exp)
-        # return exp_run
-        try:
-            # Return the active experiment run
-            yield exp_run
-        except Exception as e:
-            print(f"Error creating active experiment run: {e}")
-            raise e
-        finally:
-            run_logs = exp_run.get_logs()
-            for log in run_logs:
-                self.async_runner(self._api.upsert_experiment_run_artifact(log))
+        return ActiveExperimentRun(
+            experiment_run=exp_run, api=self._api, async_runner=self.async_runner
+        )
