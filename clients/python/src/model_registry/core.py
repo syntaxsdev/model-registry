@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
+from dataclasses import dataclass, field
 from typing import TypeVar, cast
 
 from typing_extensions import overload

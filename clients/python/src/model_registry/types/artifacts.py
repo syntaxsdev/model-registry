@@ -11,6 +11,7 @@ Todo:
 """
 
 from __future__ import annotations  # noqa: I001
+from __future__ import annotations  # noqa: I001
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
