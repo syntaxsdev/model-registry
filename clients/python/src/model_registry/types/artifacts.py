@@ -10,9 +10,10 @@ Todo:
     * Move part of the description to API Reference docs (#120).
 """
 
-from __future__ import annotations
+from __future__ import annotations  # noqa: I001
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
 from typing import Any, TypeVar
 
 from typing_extensions import override
@@ -22,6 +23,10 @@ from mr_openapi import (
 )
 from mr_openapi import (
     ArtifactState,
+    ArtifactCreate,
+    ArtifactUpdate,
+    DocArtifactCreate,
+    DocArtifactUpdate,
     ModelArtifactCreate,
     ModelArtifactUpdate,
 )
@@ -86,12 +91,24 @@ class DocArtifact(Artifact):
     """
 
     @override
-    def create(self, **kwargs) -> Any:
-        raise NotImplementedError
+    def create(self, **kwargs) -> DocArtifactCreate:
+        """Create a new DocArtifactCreate object."""
+        return DocArtifactCreate(
+            customProperties=self._map_custom_properties(),
+            **self._props_as_dict(exclude=("id", "custom_properties")),
+            artifactType="model-artifact",
+            **kwargs,
+        )
 
     @override
-    def update(self, **kwargs) -> Any:
-        raise NotImplementedError
+    def update(self, **kwargs) -> DocArtifactUpdate:
+        """Create a new DocArtifactUpdate object."""
+        return DocArtifactUpdate(
+            customProperties=self._map_custom_properties(),
+            **self._props_as_dict(exclude=("id", "name", "custom_properties")),
+            artifactType="model-artifact",
+            **kwargs,
+        )
 
     @override
     def as_basemodel(self) -> DocArtifactBaseModel:
@@ -105,7 +122,6 @@ class DocArtifact(Artifact):
     @override
     def from_basemodel(cls, source: DocArtifactBaseModel) -> DocArtifact:
         assert source.name
-        assert source.uri
         assert source.state
         return cls(
             id=source.id,
@@ -214,3 +230,62 @@ class ModelArtifact(Artifact):
             if source.custom_properties
             else None,
         )
+
+
+class ExperimentRunArtifact(DocArtifact):
+    """Represents an experiment run artifact.
+
+    Attributes:
+        name: Name of the experiment run artifact.
+        uri: URI of the experiment run artifact.
+        description: Description of the experiment run artifact.
+        external_id: Customizable ID. Has to be unique among instances of the same type.
+    """
+
+    @classmethod
+    @override
+    def from_basemodel(cls, source: DocArtifactBaseModel) -> ExperimentRunArtifact:
+        if hasattr(source, "actual_instance") and source.actual_instance:
+            actual = source.actual_instance
+            if isinstance(actual, DocArtifactBaseModel):
+                source = actual
+
+        return cls(
+            id=source.id,
+            name=source.name,
+            description=source.description,
+            external_id=source.external_id,
+            create_time_since_epoch=source.create_time_since_epoch,
+            last_update_time_since_epoch=source.last_update_time_since_epoch,
+            uri=source.uri,
+            state=source.state,
+            custom_properties=cls._unmap_custom_properties(source.custom_properties)
+            if source.custom_properties
+            else None,
+        )
+
+    @classmethod
+    @override
+    def from_doc(cls, source: DocArtifactBaseModel) -> ExperimentRunArtifact:
+        """Create a new ExperimentRunArtifact object from a DocArtifactBaseModel object."""
+        return cls(
+            id=source.id,
+            name=source.name,
+            description=source.description,
+            external_id=source.external_id,
+            create_time_since_epoch=source.create_time_since_epoch,
+            last_update_time_since_epoch=source.last_update_time_since_epoch,
+            uri=source.uri,
+            state=source.state,
+            custom_properties=source.custom_properties
+            if source.custom_properties
+            else None,
+        )
+
+
+@dataclass
+class ExperimentRunArtifactTypes:
+    """Types of experiment run artifacts."""
+
+    params: dict[str, ExperimentRunArtifact] = field(default_factory=dict)
+    metrics: dict[str, ExperimentRunArtifact] = field(default_factory=dict)
