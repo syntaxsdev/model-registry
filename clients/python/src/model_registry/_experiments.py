@@ -13,12 +13,6 @@ from model_registry.types.artifacts import (
 )
 from model_registry.types.experiments import ExperimentRun
 
-# @dataclass
-# class ExperimentRunContext:
-#     experiment_run: ExperimentRun
-#     api: ModelRegistryAPIClient
-#     async_runner: Callable
-
 LogType = Literal["params", "metrics", "datasets"]
 
 
