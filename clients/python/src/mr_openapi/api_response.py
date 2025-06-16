@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
-from typing import Generic, TypeVar
+from typing import Generic, Mapping, TypeVar
 
 from pydantic import BaseModel, Field, StrictBytes, StrictInt
 

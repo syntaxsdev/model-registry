@@ -112,6 +112,7 @@ ignore = [
     "D105", # missing docstring in magic method
     "E501", # line too long
     "S101", # use of assert detected
+    "UP035", # import Callable from collections.abc
 ]
 mccabe.max-complexity = 8
 per-file-ignores = { "tests/**/*.py" = [

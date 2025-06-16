@@ -4,8 +4,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from dataclasses import dataclass, field
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import TypeVar, cast
 
 from typing_extensions import overload
@@ -343,8 +342,6 @@ class ModelRegistryAPIClient:
             New model version artifact.
         """
         async with self.get_client() as client:
-            print("x")
-            print(artifact.wrap().to_json())
             return cast(
                 ArtifactT,
                 Artifact.validate_artifact(
@@ -518,6 +515,22 @@ class ModelRegistryAPIClient:
                 return None
 
         return RegisteredModel.from_basemodel(exp)
+
+    async def get_experiments(
+        self, options: ListOptions | None = None
+    ) -> list[Experiment]:
+        """Fetch experiments.
+
+        Args:
+            options: Options for listing experiments.
+        """
+        async with self.get_client() as client:
+            exp_list = await client.get_experiments(
+                **(options or ListOptions()).as_options()
+            )
+        if options:
+            options.next_page_token = exp_list.next_page_token
+        return [Experiment.from_basemodel(exp) for exp in exp_list.items or []]
 
     async def upsert_experiment_run(
         self, experiment_run: ExperimentRun

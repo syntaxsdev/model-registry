@@ -9,7 +9,15 @@ import os
 from collections.abc import Coroutine, Mapping
 from dataclasses import asdict
 from pathlib import Path
-from typing import Any, Awaitable, Callable, ContextManager, TypeVar, Union, get_args
+from typing import (
+    Any,
+    Awaitable,
+    Callable,
+    TypeVar,
+    Union,
+    get_args,
+    overload,
+)
 from warnings import warn
 
 from ._experiments import ActiveExperimentRun
@@ -31,8 +39,9 @@ from .utils import (
     _connect_to_s3,
     _s3_creds,
     _upload_to_s3,
-    save_to_oci_registry,
     generate_name,
+    required_args,
+    save_to_oci_registry,
 )
 
 ModelTypes = Union[RegisteredModel, ModelVersion, ModelArtifact, Experiment]
@@ -711,3 +720,46 @@ class ModelRegistry:
         return ActiveExperimentRun(
             experiment_run=exp_run, api=self._api, async_runner=self.async_runner
         )
+
+    def get_experiments(self) -> Pager[Experiment]:
+        """Get a pager for experiments.
+
+        Returns:
+            Iterable pager for experiments.
+        """
+
+        def exp_list(options: ListOptions) -> list[Experiment]:
+            return self.async_runner(self._api.get_experiments(options))
+
+        return Pager[Experiment](exp_list)
+
+    @overload
+    def get_experiment_runs(self, experiment_id: str) -> Pager[ExperimentRun]: ...
+
+    @overload
+    def get_experiment_runs(self, experiment_name: str) -> Pager[ExperimentRun]: ...
+
+    @required_args(("experiment_id",), ("experiment_name",))
+    def get_experiment_runs(
+        self, experiment_id: str | None = None, experiment_name: str | None = None
+    ) -> Pager[ExperimentRun]:
+        """Get a pager for experiment runs.
+
+        Returns:
+            Iterable pager for experiment runs.
+        """
+
+        def exp_run_list(options: ListOptions) -> list[ExperimentRun]:
+            if experiment_id:
+                return self.async_runner(
+                    self._api.get_experiment_runs_by_experiment_id(
+                        experiment_id, options
+                    )
+                )
+            return self.async_runner(
+                self._api.get_experiment_runs_by_experiment_name(
+                    experiment_name, options
+                )
+            )
+
+        return Pager[ExperimentRun](exp_run_list)

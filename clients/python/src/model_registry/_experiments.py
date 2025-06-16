@@ -98,15 +98,13 @@ class ActiveExperimentRun(AbstractContextManager):
         Keyword Args:
             description: Description of the metric.
         """
-        m = Metric(
+        self._logs.metrics[key] = Metric(
             name=key,
             value=value,
             step=step,
             timestamp=timestamp or str(int(time.time() * 1000)),
             description=description,
         )
-        print(m.wrap().to_json())
-        self._logs.metrics[key] = m
 
     def log_dataset(
         self,
