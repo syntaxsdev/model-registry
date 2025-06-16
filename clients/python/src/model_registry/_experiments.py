@@ -1,5 +1,6 @@
 import time
 from contextlib import AbstractContextManager
+from dataclasses import dataclass
 from typing import Any, Callable, Literal
 
 from model_registry.core import ModelRegistryAPIClient
@@ -16,6 +17,12 @@ from model_registry.types.experiments import ExperimentRun
 LogType = Literal["params", "metrics", "datasets"]
 
 
+@dataclass
+class RunInfo:
+    id: str
+    name: str
+
+
 class ActiveExperimentRun(AbstractContextManager):
     def __init__(
         self,
@@ -23,6 +30,7 @@ class ActiveExperimentRun(AbstractContextManager):
         api: ModelRegistryAPIClient,
         async_runner: Callable,
     ):
+        self.info = RunInfo(id=experiment_run.id, name=experiment_run.name)
         self.__exp_run = experiment_run
         self.__api = api
         self.__async_runner = async_runner
@@ -102,25 +110,27 @@ class ActiveExperimentRun(AbstractContextManager):
 
     def log_dataset(
         self,
-        key: str,
-        source_type: str,
-        source: str,
-        schema: dict,
-        profile: dict,
+        name: str | None = None,
+        uri: str | None = None,
+        source_type: str | None = None,
+        source: str | None = None,
+        schema: dict | None = None,
+        profile: dict | None = None,
     ):
         """Log a dataset to the experiment run.
 
         Args:
-            key: Name of the dataset.
-            value: Value of the dataset.
+            name: The name of the dataset.
+            uri: Value of the dataset.
             source_type: Type of the source for the dataset.
             source: Location or connection string for the dataset source.
             schema: JSON schema or description of the dataset structure.
             profile: Statistical profile or summary of the dataset.
         """
         # TODO: add support for automatic integration to upload and store
-        self._logs.datasets[key] = DataSet(
-            name=key,
+        self._logs.datasets[name] = DataSet(
+            name=name,
+            uri=uri,
             source_type=source_type,
             source=source,
             schema=schema,

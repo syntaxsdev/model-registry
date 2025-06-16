@@ -42,7 +42,6 @@ from .utils import (
     generate_name,
     required_args,
     save_to_oci_registry,
-    generate_name,
 )
 
 ModelTypes = Union[RegisteredModel, ModelVersion, ModelArtifact, Experiment]

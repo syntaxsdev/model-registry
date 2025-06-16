@@ -5,7 +5,6 @@ from __future__ import annotations
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
-from dataclasses import dataclass, field
 from typing import TypeVar, cast, overload
 
 from mr_openapi import (
@@ -341,8 +340,6 @@ class ModelRegistryAPIClient:
             New model version artifact.
         """
         async with self.get_client() as client:
-            print("x")
-            print(artifact.wrap().to_json())
             return cast(
                 ArtifactT,
                 Artifact.validate_artifact(

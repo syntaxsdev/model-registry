@@ -17,6 +17,8 @@ from dataclasses import dataclass, field
 from typing import Any, TypeVar
 from typing_extensions import override
 
+import json
+
 from mr_openapi import (
     Artifact as ArtifactBaseModel,
 )
@@ -293,6 +295,13 @@ class DataSet(Artifact):
         profile: Statistical profile or summary of the dataset.
     """
 
+    uri: str | None = None
+    digest: str | None = None
+    source_type: str | None = None
+    source: str | None = None
+    schema: str | None = None
+    profile: str | None = None
+
     @override
     def create(self, **kwargs) -> DataSetCreate:
         """Create a new DataSetCreate object."""
@@ -467,6 +476,14 @@ class Parameter(Artifact):
     def from_basemodel(cls, source: ParameterBaseModel) -> Parameter:
         """Create a new Parameter object from a BaseModel object."""
         assert source.name
+        assert source.parameter_type
+        value = source.value
+        if source.parameter_type is ParameterType.NUMBER:
+            value = float(value)
+        elif source.parameter_type is ParameterType.BOOLEAN:
+            value = bool(value)
+        elif source.parameter_type is ParameterType.OBJECT:
+            value = json.loads(value)
         return cls(
             id=source.id,
             name=source.name,
@@ -474,7 +491,7 @@ class Parameter(Artifact):
             external_id=source.external_id,
             create_time_since_epoch=source.create_time_since_epoch,
             last_update_time_since_epoch=source.last_update_time_since_epoch,
-            value=source.value,
+            value=value,
             parameter_type=source.parameter_type,
             state=source.state,
             custom_properties=cls._unmap_custom_properties(source.custom_properties)
