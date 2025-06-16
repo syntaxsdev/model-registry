@@ -6,9 +6,13 @@ Types are based on [ML Metadata](https://github.com/google/ml-metadata), with Py
 from .artifacts import (
     Artifact,
     ArtifactState,
+    DataSet,
     DocArtifact,
     ExperimentRunArtifact,
+    Metric,
     ModelArtifact,
+    Parameter,
+    ParameterType,
 )
 from .base import SupportedTypes
 from .contexts import (
@@ -26,6 +30,10 @@ __all__ = [
     "Artifact",
     "ArtifactState",
     "DocArtifact",
+    "DataSet",
+    "Metric",
+    "Parameter",
+    "ParameterType",
     "Experiment",
     "ExperimentRunArtifact",
     "ExperimentRun",
