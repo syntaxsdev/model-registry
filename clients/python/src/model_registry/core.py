@@ -343,6 +343,8 @@ class ModelRegistryAPIClient:
             New model version artifact.
         """
         async with self.get_client() as client:
+            print("x")
+            print(artifact.wrap().to_json())
             return cast(
                 ArtifactT,
                 Artifact.validate_artifact(
@@ -660,12 +662,13 @@ class ModelRegistryAPIClient:
     async def upsert_experiment_run_artifact(
         self, experiment_run_id: str, artifact: ExperimentRunArtifact
     ) -> ExperimentRunArtifact:
-        """Upsert an experiment run artifact.
+        """Upsert an experiment run artifact (parameter, metric, or dataset).
 
         Updates or creates an experiment run on the server.
 
         Args:
-            experiment_run: Experiment run to upsert.
+            experiment_run_id: Experiment run ID.
+            artifact: Artifact to upsert.
         """
         async with self.get_client() as client:
             return cast(
