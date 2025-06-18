@@ -18,6 +18,7 @@ from mr_openapi.api_response import ApiResponse
 from mr_openapi.models.artifact import Artifact
 from mr_openapi.models.artifact_create import ArtifactCreate
 from mr_openapi.models.artifact_list import ArtifactList
+from mr_openapi.models.artifact_type_query_param import ArtifactTypeQueryParam
 from mr_openapi.models.artifact_update import ArtifactUpdate
 from mr_openapi.models.experiment import Experiment
 from mr_openapi.models.experiment_create import ExperimentCreate
@@ -5515,6 +5516,9 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_artifacts(
         self,
+        artifact_type: Annotated[
+            Optional[ArtifactTypeQueryParam], Field(description="Specifies the artifact type for listing entities.")
+        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -5539,6 +5543,8 @@ class ModelRegistryServiceApi:
 
         Gets a list of all `Artifact` entities.
 
+        :param artifact_type: Specifies the artifact type for listing entities.
+        :type artifact_type: ArtifactTypeQueryParam
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -5569,6 +5575,7 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_artifacts_serialize(
+            artifact_type=artifact_type,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -5597,6 +5604,9 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_artifacts_with_http_info(
         self,
+        artifact_type: Annotated[
+            Optional[ArtifactTypeQueryParam], Field(description="Specifies the artifact type for listing entities.")
+        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -5621,6 +5631,8 @@ class ModelRegistryServiceApi:
 
         Gets a list of all `Artifact` entities.
 
+        :param artifact_type: Specifies the artifact type for listing entities.
+        :type artifact_type: ArtifactTypeQueryParam
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -5651,6 +5663,7 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_artifacts_serialize(
+            artifact_type=artifact_type,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -5679,6 +5692,9 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_artifacts_without_preload_content(
         self,
+        artifact_type: Annotated[
+            Optional[ArtifactTypeQueryParam], Field(description="Specifies the artifact type for listing entities.")
+        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -5703,6 +5719,8 @@ class ModelRegistryServiceApi:
 
         Gets a list of all `Artifact` entities.
 
+        :param artifact_type: Specifies the artifact type for listing entities.
+        :type artifact_type: ArtifactTypeQueryParam
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -5733,6 +5751,7 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_artifacts_serialize(
+            artifact_type=artifact_type,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -5756,6 +5775,7 @@ class ModelRegistryServiceApi:
 
     def _get_artifacts_serialize(
         self,
+        artifact_type,
         page_size,
         order_by,
         sort_order,
@@ -5779,6 +5799,10 @@ class ModelRegistryServiceApi:
 
         # process the path parameters
         # process the query parameters
+        if artifact_type is not None:
+
+            _query_params.append(("artifactType", artifact_type.value))
+
         if page_size is not None:
 
             _query_params.append(("pageSize", page_size))
@@ -7008,6 +7032,9 @@ class ModelRegistryServiceApi:
         experimentrun_id: Annotated[StrictStr, Field(description="A unique identifier for an `ExperimentRun`.")],
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
+        artifact_type: Annotated[
+            Optional[ArtifactTypeQueryParam], Field(description="Specifies the artifact type for listing entities.")
+        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -7036,6 +7063,8 @@ class ModelRegistryServiceApi:
         :type name: str
         :param external_id: External ID of entity to search.
         :type external_id: str
+        :param artifact_type: Specifies the artifact type for listing entities.
+        :type artifact_type: ArtifactTypeQueryParam
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -7069,6 +7098,7 @@ class ModelRegistryServiceApi:
             experimentrun_id=experimentrun_id,
             name=name,
             external_id=external_id,
+            artifact_type=artifact_type,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -7099,6 +7129,9 @@ class ModelRegistryServiceApi:
         experimentrun_id: Annotated[StrictStr, Field(description="A unique identifier for an `ExperimentRun`.")],
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
+        artifact_type: Annotated[
+            Optional[ArtifactTypeQueryParam], Field(description="Specifies the artifact type for listing entities.")
+        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -7127,6 +7160,8 @@ class ModelRegistryServiceApi:
         :type name: str
         :param external_id: External ID of entity to search.
         :type external_id: str
+        :param artifact_type: Specifies the artifact type for listing entities.
+        :type artifact_type: ArtifactTypeQueryParam
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -7160,6 +7195,7 @@ class ModelRegistryServiceApi:
             experimentrun_id=experimentrun_id,
             name=name,
             external_id=external_id,
+            artifact_type=artifact_type,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -7190,6 +7226,9 @@ class ModelRegistryServiceApi:
         experimentrun_id: Annotated[StrictStr, Field(description="A unique identifier for an `ExperimentRun`.")],
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
+        artifact_type: Annotated[
+            Optional[ArtifactTypeQueryParam], Field(description="Specifies the artifact type for listing entities.")
+        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -7218,6 +7257,8 @@ class ModelRegistryServiceApi:
         :type name: str
         :param external_id: External ID of entity to search.
         :type external_id: str
+        :param artifact_type: Specifies the artifact type for listing entities.
+        :type artifact_type: ArtifactTypeQueryParam
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -7251,6 +7292,7 @@ class ModelRegistryServiceApi:
             experimentrun_id=experimentrun_id,
             name=name,
             external_id=external_id,
+            artifact_type=artifact_type,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -7276,6 +7318,7 @@ class ModelRegistryServiceApi:
         experimentrun_id,
         name,
         external_id,
+        artifact_type,
         page_size,
         order_by,
         sort_order,
@@ -7308,6 +7351,10 @@ class ModelRegistryServiceApi:
         if external_id is not None:
 
             _query_params.append(("externalId", external_id))
+
+        if artifact_type is not None:
+
+            _query_params.append(("artifactType", artifact_type.value))
 
         if page_size is not None:
 
@@ -10100,6 +10147,9 @@ class ModelRegistryServiceApi:
         modelversion_id: Annotated[StrictStr, Field(description="A unique identifier for a `ModelVersion`.")],
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
+        artifact_type: Annotated[
+            Optional[ArtifactTypeQueryParam], Field(description="Specifies the artifact type for listing entities.")
+        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -10128,6 +10178,8 @@ class ModelRegistryServiceApi:
         :type name: str
         :param external_id: External ID of entity to search.
         :type external_id: str
+        :param artifact_type: Specifies the artifact type for listing entities.
+        :type artifact_type: ArtifactTypeQueryParam
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -10161,6 +10213,7 @@ class ModelRegistryServiceApi:
             modelversion_id=modelversion_id,
             name=name,
             external_id=external_id,
+            artifact_type=artifact_type,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -10191,6 +10244,9 @@ class ModelRegistryServiceApi:
         modelversion_id: Annotated[StrictStr, Field(description="A unique identifier for a `ModelVersion`.")],
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
+        artifact_type: Annotated[
+            Optional[ArtifactTypeQueryParam], Field(description="Specifies the artifact type for listing entities.")
+        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -10219,6 +10275,8 @@ class ModelRegistryServiceApi:
         :type name: str
         :param external_id: External ID of entity to search.
         :type external_id: str
+        :param artifact_type: Specifies the artifact type for listing entities.
+        :type artifact_type: ArtifactTypeQueryParam
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -10252,6 +10310,7 @@ class ModelRegistryServiceApi:
             modelversion_id=modelversion_id,
             name=name,
             external_id=external_id,
+            artifact_type=artifact_type,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -10282,6 +10341,9 @@ class ModelRegistryServiceApi:
         modelversion_id: Annotated[StrictStr, Field(description="A unique identifier for a `ModelVersion`.")],
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
+        artifact_type: Annotated[
+            Optional[ArtifactTypeQueryParam], Field(description="Specifies the artifact type for listing entities.")
+        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -10310,6 +10372,8 @@ class ModelRegistryServiceApi:
         :type name: str
         :param external_id: External ID of entity to search.
         :type external_id: str
+        :param artifact_type: Specifies the artifact type for listing entities.
+        :type artifact_type: ArtifactTypeQueryParam
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -10343,6 +10407,7 @@ class ModelRegistryServiceApi:
             modelversion_id=modelversion_id,
             name=name,
             external_id=external_id,
+            artifact_type=artifact_type,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -10368,6 +10433,7 @@ class ModelRegistryServiceApi:
         modelversion_id,
         name,
         external_id,
+        artifact_type,
         page_size,
         order_by,
         sort_order,
@@ -10400,6 +10466,10 @@ class ModelRegistryServiceApi:
         if external_id is not None:
 
             _query_params.append(("externalId", external_id))
+
+        if artifact_type is not None:
+
+            _query_params.append(("artifactType", artifact_type.value))
 
         if page_size is not None:
 

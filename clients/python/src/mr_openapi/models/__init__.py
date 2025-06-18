@@ -18,6 +18,7 @@ from mr_openapi.models.artifact import Artifact
 from mr_openapi.models.artifact_create import ArtifactCreate
 from mr_openapi.models.artifact_list import ArtifactList
 from mr_openapi.models.artifact_state import ArtifactState
+from mr_openapi.models.artifact_type_query_param import ArtifactTypeQueryParam
 from mr_openapi.models.artifact_update import ArtifactUpdate
 from mr_openapi.models.base_model import BaseModel
 from mr_openapi.models.base_resource import BaseResource

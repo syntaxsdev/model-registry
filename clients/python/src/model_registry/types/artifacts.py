@@ -14,8 +14,7 @@ from __future__ import annotations  # noqa: I001
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, TypeVar
-from typing_extensions import override
+from typing import Any, TypeVar, override
 
 import json
 
@@ -63,12 +62,15 @@ class Artifact(BaseResourceModel, ABC):
 
     Attributes:
         name: Name of the artifact.
-        uri: URI of the artifact.
         state: State of the artifact.
+        description: Description of the artifact.
+        external_id: Customizable ID. Has to be unique among instances of the same type.
     """
 
     name: str | None = None
     state: ArtifactState = ArtifactState.UNKNOWN
+    description: str | None = None
+    external_id: str | None = None
 
     @classmethod
     def from_artifact(cls: type[A], source: ArtifactBaseModel) -> A:
@@ -96,25 +98,6 @@ class Artifact(BaseResourceModel, ABC):
             return Parameter.from_basemodel(model)
         msg = f"Invalid artifact type: {type(model)}"
         raise ValueError(msg)
-
-    # @staticmethod
-    # def determine_artifact_type(source: ArtifactBaseModel) -> type[Artifact]:
-    #     """Determine the type of artifact."""
-    #     model = source
-    #     if hasattr(source, "actual_instance") and source.actual_instance:
-    #         model = source.actual_instance
-    #     assert model
-    #     if isinstance(model, DocArtifactBaseModel):
-    #         return DocArtifact
-    #     if isinstance(model, ModelArtifactBaseModel):
-    #         return ModelArtifact
-    #     if isinstance(model, DataSetBaseModel):
-    #         return DataSet
-    #     if isinstance(model, MetricBaseModel):
-    #         return Metric
-    #     if isinstance(model, ParameterBaseModel):
-    #         return Parameter
-    #     return Artifact
 
     @abstractmethod
     def as_basemodel(self) -> Any:
@@ -501,57 +484,6 @@ class Parameter(Artifact):
 
 
 ExperimentRunArtifact = Parameter | Metric | DataSet
-
-
-# class ExperimentRunArtifact(DocArtifact):
-#     """Represents an experiment run artifact.
-
-#     Attributes:
-#         name: Name of the experiment run artifact.
-#         uri: URI of the experiment run artifact.
-#         description: Description of the experiment run artifact.
-#         external_id: Customizable ID. Has to be unique among instances of the same type.
-#     """
-
-#     @classmethod
-#     @override
-#     def from_basemodel(cls, source: DocArtifactBaseModel) -> ExperimentRunArtifact:
-#         if hasattr(source, "actual_instance") and source.actual_instance:
-#             actual = source.actual_instance
-#             if isinstance(actual, DocArtifactBaseModel):
-#                 source = actual
-
-#         return cls(
-#             id=source.id,
-#             name=source.name,
-#             description=source.description,
-#             external_id=source.external_id,
-#             create_time_since_epoch=source.create_time_since_epoch,
-#             last_update_time_since_epoch=source.last_update_time_since_epoch,
-#             uri=source.uri,
-#             state=source.state,
-#             custom_properties=cls._unmap_custom_properties(source.custom_properties)
-#             if source.custom_properties
-#             else None,
-#         )
-
-#     @classmethod
-#     @override
-#     def from_doc(cls, source: DocArtifactBaseModel) -> ExperimentRunArtifact:
-#         """Create a new ExperimentRunArtifact object from a DocArtifactBaseModel object."""
-#         return cls(
-#             id=source.id,
-#             name=source.name,
-#             description=source.description,
-#             external_id=source.external_id,
-#             create_time_since_epoch=source.create_time_since_epoch,
-#             last_update_time_since_epoch=source.last_update_time_since_epoch,
-#             uri=source.uri,
-#             state=source.state,
-#             custom_properties=source.custom_properties
-#             if source.custom_properties
-#             else None,
-#         )
 
 
 @dataclass

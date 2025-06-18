@@ -3,13 +3,18 @@ import json
 import pytest
 
 from model_registry import ModelRegistry
+from model_registry.types import ArtifactTypeQueryParam, ListOptions
+
+
+@pytest.fixture
+def schema_json():
+    schema = {"epochs": {}}
+    return json.dumps(schema)
 
 
 @pytest.mark.e2e
-def test_start_experiment_run(client: ModelRegistry):
+def test_start_experiment_run(client: ModelRegistry, schema_json: str):
     with client.start_experiment_run(experiment_name="Experiment_Test") as run:
-        schema = {"epochs": {}}
-        schema_json = json.dumps(schema)
         run.log_param("input1", 5.75)
         run.log_metric(
             key="rval",
@@ -22,7 +27,7 @@ def test_start_experiment_run(client: ModelRegistry):
             name="dataset_1",
             source_type="local",
             uri="s3://datasets/test",
-            schema=f"{str(schema_json)}",
+            schema=schema_json,
             profile="random_profile",
         )
 
@@ -56,7 +61,7 @@ def test_start_experiment_run_with_advanced_scenarios(client: ModelRegistry):
 
 @pytest.mark.e2e
 def test_experiments(client: ModelRegistry):
-    with client.start_experiment_run(experiment_name="Experiment_Test_2") as run:
+    with client.start_experiment_run(experiment_name="Experiment_Test_2"):
         pass
     found_exp = False
     for experiment in client.get_experiments():
@@ -67,9 +72,16 @@ def test_experiments(client: ModelRegistry):
 
 @pytest.mark.e2e
 def test_get_experiment_runs(client: ModelRegistry):
-    with client.start_experiment_run(experiment_name="Experiment_Test_2") as run:
-        pass
-    runs = client.get_experiment_runs(experiment_name="Experiment_Test_2")
+    """This tests:
+    - get_experiment_runs(name)
+    - get_experiment_runs(id)
+    """
+    with client.start_experiment_run(experiment_name="Experiment_Test_3") as run:
+        run.log_param("input1", 5.75)
+    runs = client.get_experiment_runs(experiment_name="Experiment_Test_3")
+    runs_by_id = client.get_experiment_runs(experiment_id=run.info.experiment_id)
+
+    assert runs.next_item().id == runs_by_id.next_item().id
     found_exp_run_by_id = False
     found_exp_run_by_name = False
     for r in runs:
@@ -79,3 +91,35 @@ def test_get_experiment_runs(client: ModelRegistry):
             found_exp_run_by_name = True
     assert found_exp_run_by_id
     assert found_exp_run_by_name
+
+
+@pytest.mark.e2e
+def test_get_experiment_run_with_artifact_types(
+    client: ModelRegistry, schema_json: str
+):
+    with client.start_experiment_run(experiment_name="Experiment_Test_4") as run:
+        run.log_dataset(
+            name="dataset_1",
+            source_type="local",
+            uri="s3://datasets/test",
+            schema=schema_json,
+            profile="random_profile",
+            description="This is a test dataset",
+        )
+        run.log_metric(
+            key="metric_1",
+            value=10,
+            step=4,
+            timestamp="0",
+            description="This is a test metric",
+        )
+        run.log_param(
+            key="param_1",
+            value=10,
+            description="This is a test param",
+        )
+
+    # dataset_log = client.get_experiment_run_logs(
+    #     run.info.id,
+    #     options=ListOptions(artifact_type=ArtifactTypeQueryParam.DATASET),
+    # )

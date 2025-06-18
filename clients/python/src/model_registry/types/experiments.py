@@ -7,9 +7,7 @@ Experiment types are used to map between proto types based on experiments and Py
 
 from __future__ import annotations  # noqa: I001
 
-from typing import Any
-
-from typing_extensions import override
+from typing import Any, override
 
 from mr_openapi import (
     Experiment as ExperimentBaseModel,
@@ -45,7 +43,7 @@ class Experiment(BaseResourceModel):
     owner: str | None = None
     description: str | None = None
     external_id: str | None = None
-    state: ExperimentState = None
+    state: ExperimentState | None= None
     custom_properties: dict[str, Any] | None = None
 
     @override
@@ -112,7 +110,7 @@ class ExperimentRun(BaseResourceModel):
     owner: str | None = None
     description: str | None = None
     external_id: str | None = None
-    state: ExperimentRunState = None
+    state: ExperimentRunState | None = None
     custom_properties: dict[str, Any] | None = None
 
     @override

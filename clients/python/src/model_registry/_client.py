@@ -20,6 +20,9 @@ from typing import (
 )
 from warnings import warn
 
+from model_registry.types.artifacts import ExperimentRunArtifact
+from mr_openapi.models.artifact_type_query_param import ArtifactTypeQueryParam
+
 from ._experiments import ActiveExperimentRun
 from .core import ModelRegistryAPIClient
 from .exceptions import StoreError
@@ -752,7 +755,7 @@ class ModelRegistry:
         def exp_run_list(options: ListOptions) -> list[ExperimentRun]:
             if experiment_id:
                 return self.async_runner(
-                    self._api.get_experiment_runs_by_experiment_id(
+                    self._api.get_eperiment_runs_by_experiment_id(
                         experiment_id, options
                     )
                 )
@@ -763,3 +766,84 @@ class ModelRegistry:
             )
 
         return Pager[ExperimentRun](exp_run_list)
+
+    @overload
+    def get_experiment_run_logs(
+        self,
+        run_id: str,
+        *,
+        artifact_type: ArtifactTypeQueryParam,
+    ) -> Pager[ExperimentRunArtifact]: ...
+
+    @overload
+    def get_experiment_run_logs(
+        self,
+        run_name: str,
+        experiment_name: str,
+        *,
+        artifact_type: ArtifactTypeQueryParam,
+    ) -> Pager[ExperimentRunArtifact]: ...
+
+    @overload
+    def get_experiment_run_logs(
+        self,
+        run_name: str,
+        experiment_id: str,
+        *,
+        artifact_type: ArtifactTypeQueryParam,
+    ) -> Pager[ExperimentRunArtifact]: ...
+
+    @required_args(
+        ("run_id",),
+        (
+            "run_name",
+            "experiment_name",
+        ),
+        (
+            "run_name",
+            "experiment_id",
+        ),
+    )
+    def get_experiment_run_logs(
+        self,
+        run_id: str | None = None,
+        run_name: str | None = None,
+        experiment_id: str | None = None,
+        experiment_name: str | None = None,
+    ) -> Pager[ExperimentRunArtifact]:
+        """Get a pager for experiment run logs.
+
+        Args:
+            run_id: ID of the experiment run.
+            run_name: Name of the experiment run.
+            experiment_id: ID of the experiment.
+            experiment_name: Name of the experiment.
+
+        Returns:
+            Iterable pager for experiment run logs.
+        """
+
+        def exp_run_logs(options: ListOptions) -> list[ExperimentRunArtifact]:
+            if run_id:
+                return self.async_runner(
+                    self._api.get_artifacts_by_experiment_run_params(
+                        run_id=run_id, options=options
+                    )
+                )
+            if run_name:
+                return self.async_runner(
+                    self._api.get_artifacts_by_experiment_run_params(
+                        run_name=run_name,
+                        experiment_name=experiment_name,
+                        options=options,
+                    )
+                )
+            if experiment_id:
+                return self.async_runner(
+                    self._api.get_artifacts_by_experiment_run_params(
+                        experiment_id=experiment_id, options=options
+                    )
+                )
+            return None
+
+        return Pager[ExperimentRunArtifact](exp_run_logs)

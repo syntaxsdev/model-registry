@@ -22,7 +22,7 @@ from .contexts import (
     RegisteredModelState,
 )
 from .experiments import Experiment, ExperimentRun
-from .options import ListOptions
+from .options import ArtifactTypeQueryParam, ListOptions
 from .pager import Pager
 
 __all__ = [
@@ -46,6 +46,7 @@ __all__ = [
     "SupportedTypes",
     # Options
     "ListOptions",
+    "ArtifactTypeQueryParam",
     # Pager
     "Pager",
 ]

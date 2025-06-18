@@ -19,6 +19,7 @@ LogType = Literal["params", "metrics", "datasets"]
 
 @dataclass
 class RunInfo:
+    experiment_id: str
     id: str
     name: str
 
@@ -30,7 +31,11 @@ class ActiveExperimentRun(AbstractContextManager):
         api: ModelRegistryAPIClient,
         async_runner: Callable,
     ):
-        self.info = RunInfo(id=experiment_run.id, name=experiment_run.name)
+        self.info = RunInfo(
+            id=experiment_run.id,
+            name=experiment_run.name,
+            experiment_id=experiment_run.experiment_id,
+        )
         self.__exp_run = experiment_run
         self.__api = api
         self.__async_runner = async_runner
@@ -57,7 +62,7 @@ class ActiveExperimentRun(AbstractContextManager):
                 temp_artifacts.datasets[log.name] = server_log
         self._logs = temp_artifacts
 
-    def log_param(self, key: str, value: Any):
+    def log_param(self, key: str, value: Any, *, description: str | None = None):
         """Log a parameter to the experiment run.
 
         The parameter type is inferred from the value type.
@@ -65,6 +70,9 @@ class ActiveExperimentRun(AbstractContextManager):
         Args:
             key: Name of the parameter.
             value: Value of the parameter.
+
+        Keyword Args:
+            description: Description of the parameter.
         """
         param_type = ParameterType.STRING
         if isinstance(value, bool):
@@ -77,6 +85,7 @@ class ActiveExperimentRun(AbstractContextManager):
         self._logs.params[key] = Parameter(
             name=key,
             value=value,
+            description=description,
             parameter_type=param_type,
         )
 
@@ -116,6 +125,8 @@ class ActiveExperimentRun(AbstractContextManager):
         source: str | None = None,
         schema: dict | None = None,
         profile: dict | None = None,
+        *,
+        description: str | None = None,
     ):
         """Log a dataset to the experiment run.
 
@@ -126,6 +137,9 @@ class ActiveExperimentRun(AbstractContextManager):
             source: Location or connection string for the dataset source.
             schema: JSON schema or description of the dataset structure.
             profile: Statistical profile or summary of the dataset.
+
+        Keyword Args:
+            description: Description of the dataset.
         """
         # TODO: add support for automatic integration to upload and store
         self._logs.datasets[name] = DataSet(
@@ -135,6 +149,7 @@ class ActiveExperimentRun(AbstractContextManager):
             source=source,
             schema=schema,
             profile=profile,
+            description=description,
         )
 
     def get_log(self, type: LogType, key: str) -> ExperimentRunArtifact:

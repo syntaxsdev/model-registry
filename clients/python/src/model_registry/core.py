@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import TypeVar, cast, overload
 
 from mr_openapi import (
@@ -556,7 +556,8 @@ class ModelRegistryAPIClient:
         """Fetch experiment runs by experiment ID.
 
         Args:
-            experiment_run: Experiment run to upsert.
+            experiment_id: Experiment ID.
+            options: Options for listing experiment runs.
         """
         async with self.get_client() as client:
             try:
@@ -579,7 +580,9 @@ class ModelRegistryAPIClient:
         """Fetch experiment runs by experiment name.
 
         Args:
-            experiment_run: Experiment run to upsert.
+            experiment_name: Experiment run to upsert.
+            options: Options for listing experiment runs.
+
         """
         async with self.get_client() as client:
             try:
@@ -604,7 +607,6 @@ class ModelRegistryAPIClient:
         run_id: str | int,
         experiment_name: str | None = None,
         experiment_id: str | int | None = None,
-        options: ListOptions | None = None,
     ) -> ExperimentRun:
         """Fetch experiment runs by experiment name / ID and the run ID.
 
@@ -692,16 +694,24 @@ class ModelRegistryAPIClient:
             )
 
     @overload
-    async def get_artifacts_by_experiment_run_params(self, run_id: str | int): ...
-
-    @overload
     async def get_artifacts_by_experiment_run_params(
-        self, run_name: str, experiment_name: str | None = None
+        self, run_id: str | int, options: ListOptions | None = None
     ): ...
 
     @overload
     async def get_artifacts_by_experiment_run_params(
-        self, run_name: str, experiment_id: str | int | None = None
+        self,
+        run_name: str,
+        experiment_name: str | None = None,
+        options: ListOptions | None = None,
+    ): ...
+
+    @overload
+    async def get_artifacts_by_experiment_run_params(
+        self,
+        run_name: str,
+        experiment_id: str | int | None = None,
+        options: ListOptions | None = None,
     ): ...
 
     @required_args(
@@ -713,6 +723,7 @@ class ModelRegistryAPIClient:
         run_name: str | None = None,
         experiment_name: str | None = None,
         experiment_id: str | int | None = None,
+        *,
         options: ListOptions | None = None,
     ) -> ExperimentRunArtifact:
         """Fetch a log by experiment run ID and name.
@@ -722,6 +733,8 @@ class ModelRegistryAPIClient:
             run_name: Experiment run name.
             experiment_name: Experiment name.
             experiment_id: Experiment ID.
+
+        Keyword Args:
             options: Options for listing experiment run artifacts.
         """
         async with self.get_client() as client:
@@ -739,18 +752,17 @@ class ModelRegistryAPIClient:
                         msg = "Either experiment_name or experiment_id must be provided"
                         raise ValueError(msg)
 
-                    run_id = exp_runs[0].id
-                    print(run_id)
+                    run = next((r for r in exp_runs if r.name == run_name), None)
+                    if not run:
+                        return []
+                    run_id = run.id
 
-                if not run_id:
-                    msg = "Could not find experiment run"
-                    raise ValueError(msg)
                 logs = await client.get_experiment_run_artifacts(
-                    str(run_id), **(ListOptions()).as_options()
+                    str(run_id), **(options or ListOptions()).as_options()
                 )
             except mr_exceptions.NotFoundException:
                 return []
 
         if options:
             options.next_page_token = logs.next_page_token
-        return [ExperimentRunArtifact.from_basemodel(log) for log in logs.items or []]
+        return [Artifact.validate_artifact(log) for log in logs.items or []]

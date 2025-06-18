@@ -135,6 +135,7 @@ Class | Method | HTTP request | Description
  - [ArtifactCreate](mr_openapi/docs/ArtifactCreate.md)
  - [ArtifactList](mr_openapi/docs/ArtifactList.md)
  - [ArtifactState](mr_openapi/docs/ArtifactState.md)
+ - [ArtifactTypeQueryParam](mr_openapi/docs/ArtifactTypeQueryParam.md)
  - [ArtifactUpdate](mr_openapi/docs/ArtifactUpdate.md)
  - [BaseModel](mr_openapi/docs/BaseModel.md)
  - [BaseResource](mr_openapi/docs/BaseResource.md)
