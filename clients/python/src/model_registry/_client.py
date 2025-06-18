@@ -21,7 +21,6 @@ from typing import (
 from warnings import warn
 
 from model_registry.types.artifacts import ExperimentRunArtifact
-from mr_openapi.models.artifact_type_query_param import ArtifactTypeQueryParam
 
 from ._experiments import ActiveExperimentRun
 from .core import ModelRegistryAPIClient
@@ -755,7 +754,7 @@ class ModelRegistry:
         def exp_run_list(options: ListOptions) -> list[ExperimentRun]:
             if experiment_id:
                 return self.async_runner(
-                    self._api.get_eperiment_runs_by_experiment_id(
+                    self._api.get_experiment_runs_by_experiment_id(
                         experiment_id, options
                     )
                 )
@@ -771,8 +770,6 @@ class ModelRegistry:
     def get_experiment_run_logs(
         self,
         run_id: str,
-        *,
-        artifact_type: ArtifactTypeQueryParam,
     ) -> Pager[ExperimentRunArtifact]: ...
 
     @overload
@@ -780,8 +777,6 @@ class ModelRegistry:
         self,
         run_name: str,
         experiment_name: str,
-        *,
-        artifact_type: ArtifactTypeQueryParam,
     ) -> Pager[ExperimentRunArtifact]: ...
 
     @overload
@@ -789,8 +784,6 @@ class ModelRegistry:
         self,
         run_name: str,
         experiment_id: str,
-        *,
-        artifact_type: ArtifactTypeQueryParam,
     ) -> Pager[ExperimentRunArtifact]: ...
 
     @required_args(
@@ -830,7 +823,7 @@ class ModelRegistry:
                         run_id=run_id, options=options
                     )
                 )
-            if run_name:
+            if run_name and experiment_name:
                 return self.async_runner(
                     self._api.get_artifacts_by_experiment_run_params(
                         run_name=run_name,
@@ -838,7 +831,7 @@ class ModelRegistry:
                         options=options,
                     )
                 )
-            if experiment_id:
+            if run_name and experiment_id:
                 return self.async_runner(
                     self._api.get_artifacts_by_experiment_run_params(
                         experiment_id=experiment_id, options=options

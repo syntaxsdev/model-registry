@@ -3,7 +3,6 @@ import json
 import pytest
 
 from model_registry import ModelRegistry
-from model_registry.types import ArtifactTypeQueryParam, ListOptions
 
 
 @pytest.fixture
@@ -119,7 +118,15 @@ def test_get_experiment_run_with_artifact_types(
             description="This is a test param",
         )
 
-    # dataset_log = client.get_experiment_run_logs(
-    #     run.info.id,
-    #     options=ListOptions(artifact_type=ArtifactTypeQueryParam.DATASET),
-    # )
+    dataset_log = client.get_experiment_run_logs(
+        run_id=run.info.id,
+    )
+    assert dataset_log.next_item().name.endswith("1")
+    assert dataset_log.next_item()
+    assert dataset_log.next_item()
+    try:
+        # fail if we get a 4th item
+        dataset_log.next_item()
+        pytest.fail("Expected StopIteration")
+    except StopIteration:
+        assert True

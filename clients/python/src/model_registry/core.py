@@ -743,10 +743,12 @@ class ModelRegistryAPIClient:
                     if experiment_name:
                         exp_runs = await self.get_experiment_runs_by_experiment_name(
                             experiment_name=experiment_name,
+                            options=ListOptions(limit=100),
                         )
                     elif experiment_id:
                         exp_runs = await self.get_experiment_runs_by_experiment_id(
                             experiment_id=experiment_id,
+                            options=ListOptions(limit=100),
                         )
                     else:
                         msg = "Either experiment_name or experiment_id must be provided"
@@ -754,6 +756,11 @@ class ModelRegistryAPIClient:
 
                     run = next((r for r in exp_runs if r.name == run_name), None)
                     if not run:
+                        print(
+                            f"Could not find run {run_name} \
+                                in experiment {experiment_name} within the first 100 runs. \
+                                Please narrow your search by run id."
+                        )
                         return []
                     run_id = run.id
 
