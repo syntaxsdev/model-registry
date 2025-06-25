@@ -5515,12 +5515,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_artifacts(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         artifact_type: Annotated[
             Optional[ArtifactTypeQueryParam], Field(description="Specifies the artifact type for listing artifacts.")
         ] = None,
@@ -5544,12 +5538,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ArtifactList:
-        r"""List All Artifacts.
+        """List All Artifacts.
 
         Gets a list of all `Artifact` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param artifact_type: Specifies the artifact type for listing artifacts.
         :type artifact_type: ArtifactTypeQueryParam
         :param page_size: Number of entities in each page.
@@ -5582,7 +5574,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_artifacts_serialize(
-            filter_query=filter_query,
             artifact_type=artifact_type,
             page_size=page_size,
             order_by=order_by,
@@ -5612,12 +5603,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_artifacts_with_http_info(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         artifact_type: Annotated[
             Optional[ArtifactTypeQueryParam], Field(description="Specifies the artifact type for listing artifacts.")
         ] = None,
@@ -5641,12 +5626,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[ArtifactList]:
-        r"""List All Artifacts.
+        """List All Artifacts.
 
         Gets a list of all `Artifact` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param artifact_type: Specifies the artifact type for listing artifacts.
         :type artifact_type: ArtifactTypeQueryParam
         :param page_size: Number of entities in each page.
@@ -5679,7 +5662,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_artifacts_serialize(
-            filter_query=filter_query,
             artifact_type=artifact_type,
             page_size=page_size,
             order_by=order_by,
@@ -5709,12 +5691,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_artifacts_without_preload_content(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         artifact_type: Annotated[
             Optional[ArtifactTypeQueryParam], Field(description="Specifies the artifact type for listing artifacts.")
         ] = None,
@@ -5738,12 +5714,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List All Artifacts.
+        """List All Artifacts.
 
         Gets a list of all `Artifact` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param artifact_type: Specifies the artifact type for listing artifacts.
         :type artifact_type: ArtifactTypeQueryParam
         :param page_size: Number of entities in each page.
@@ -5776,7 +5750,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_artifacts_serialize(
-            filter_query=filter_query,
             artifact_type=artifact_type,
             page_size=page_size,
             order_by=order_by,
@@ -5801,7 +5774,6 @@ class ModelRegistryServiceApi:
 
     def _get_artifacts_serialize(
         self,
-        filter_query,
         artifact_type,
         page_size,
         order_by,
@@ -5826,10 +5798,6 @@ class ModelRegistryServiceApi:
 
         # process the path parameters
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if artifact_type is not None:
 
             _query_params.append(("artifactType", artifact_type.value))
@@ -5881,12 +5849,6 @@ class ModelRegistryServiceApi:
         servingenvironment_id: Annotated[
             StrictStr, Field(description="A unique identifier for a `ServingEnvironment`.")
         ],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
@@ -5909,14 +5871,12 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> InferenceServiceList:
-        r"""List All ServingEnvironment's InferenceServices.
+        """List All ServingEnvironment's InferenceServices.
 
         Gets a list of all `InferenceService` entities for the `ServingEnvironment`.
 
         :param servingenvironment_id: A unique identifier for a `ServingEnvironment`. (required)
         :type servingenvironment_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param external_id: External ID of entity to search.
@@ -5952,7 +5912,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_environment_inference_services_serialize(
             servingenvironment_id=servingenvironment_id,
-            filter_query=filter_query,
             name=name,
             external_id=external_id,
             page_size=page_size,
@@ -5985,12 +5944,6 @@ class ModelRegistryServiceApi:
         servingenvironment_id: Annotated[
             StrictStr, Field(description="A unique identifier for a `ServingEnvironment`.")
         ],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
@@ -6013,14 +5966,12 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[InferenceServiceList]:
-        r"""List All ServingEnvironment's InferenceServices.
+        """List All ServingEnvironment's InferenceServices.
 
         Gets a list of all `InferenceService` entities for the `ServingEnvironment`.
 
         :param servingenvironment_id: A unique identifier for a `ServingEnvironment`. (required)
         :type servingenvironment_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param external_id: External ID of entity to search.
@@ -6056,7 +6007,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_environment_inference_services_serialize(
             servingenvironment_id=servingenvironment_id,
-            filter_query=filter_query,
             name=name,
             external_id=external_id,
             page_size=page_size,
@@ -6089,12 +6039,6 @@ class ModelRegistryServiceApi:
         servingenvironment_id: Annotated[
             StrictStr, Field(description="A unique identifier for a `ServingEnvironment`.")
         ],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
@@ -6117,14 +6061,12 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List All ServingEnvironment's InferenceServices.
+        """List All ServingEnvironment's InferenceServices.
 
         Gets a list of all `InferenceService` entities for the `ServingEnvironment`.
 
         :param servingenvironment_id: A unique identifier for a `ServingEnvironment`. (required)
         :type servingenvironment_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param external_id: External ID of entity to search.
@@ -6160,7 +6102,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_environment_inference_services_serialize(
             servingenvironment_id=servingenvironment_id,
-            filter_query=filter_query,
             name=name,
             external_id=external_id,
             page_size=page_size,
@@ -6186,7 +6127,6 @@ class ModelRegistryServiceApi:
     def _get_environment_inference_services_serialize(
         self,
         servingenvironment_id,
-        filter_query,
         name,
         external_id,
         page_size,
@@ -6214,10 +6154,6 @@ class ModelRegistryServiceApi:
         if servingenvironment_id is not None:
             _path_params["servingenvironmentId"] = servingenvironment_id
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if name is not None:
 
             _query_params.append(("name", name))
@@ -6507,12 +6443,6 @@ class ModelRegistryServiceApi:
         experiment_id: Annotated[StrictStr, Field(description="A unique identifier for an `Experiment`.")],
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -6533,7 +6463,7 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ExperimentRunList:
-        r"""List All Experiment's ExperimentRuns.
+        """List All Experiment's ExperimentRuns.
 
         Gets a list of all `ExperimentRun` entities for the `Experiment`.
 
@@ -6543,8 +6473,6 @@ class ModelRegistryServiceApi:
         :type name: str
         :param external_id: External ID of entity to search.
         :type external_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -6578,7 +6506,6 @@ class ModelRegistryServiceApi:
             experiment_id=experiment_id,
             name=name,
             external_id=external_id,
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -6609,12 +6536,6 @@ class ModelRegistryServiceApi:
         experiment_id: Annotated[StrictStr, Field(description="A unique identifier for an `Experiment`.")],
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -6635,7 +6556,7 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[ExperimentRunList]:
-        r"""List All Experiment's ExperimentRuns.
+        """List All Experiment's ExperimentRuns.
 
         Gets a list of all `ExperimentRun` entities for the `Experiment`.
 
@@ -6645,8 +6566,6 @@ class ModelRegistryServiceApi:
         :type name: str
         :param external_id: External ID of entity to search.
         :type external_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -6680,7 +6599,6 @@ class ModelRegistryServiceApi:
             experiment_id=experiment_id,
             name=name,
             external_id=external_id,
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -6711,12 +6629,6 @@ class ModelRegistryServiceApi:
         experiment_id: Annotated[StrictStr, Field(description="A unique identifier for an `Experiment`.")],
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -6737,7 +6649,7 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List All Experiment's ExperimentRuns.
+        """List All Experiment's ExperimentRuns.
 
         Gets a list of all `ExperimentRun` entities for the `Experiment`.
 
@@ -6747,8 +6659,6 @@ class ModelRegistryServiceApi:
         :type name: str
         :param external_id: External ID of entity to search.
         :type external_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -6782,7 +6692,6 @@ class ModelRegistryServiceApi:
             experiment_id=experiment_id,
             name=name,
             external_id=external_id,
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -6808,7 +6717,6 @@ class ModelRegistryServiceApi:
         experiment_id,
         name,
         external_id,
-        filter_query,
         page_size,
         order_by,
         sort_order,
@@ -6841,10 +6749,6 @@ class ModelRegistryServiceApi:
         if external_id is not None:
 
             _query_params.append(("externalId", external_id))
-
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
 
         if page_size is not None:
 
@@ -7125,12 +7029,6 @@ class ModelRegistryServiceApi:
     async def get_experiment_run_artifacts(
         self,
         experimentrun_id: Annotated[StrictStr, Field(description="A unique identifier for an `ExperimentRun`.")],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
         artifact_type: Annotated[
@@ -7156,12 +7054,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ArtifactList:
-        r"""List all artifacts associated with the `ExperimentRun`.
+        """List all artifacts associated with the `ExperimentRun`.
 
         :param experimentrun_id: A unique identifier for an `ExperimentRun`. (required)
         :type experimentrun_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param external_id: External ID of entity to search.
@@ -7199,7 +7095,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_experiment_run_artifacts_serialize(
             experimentrun_id=experimentrun_id,
-            filter_query=filter_query,
             name=name,
             external_id=external_id,
             artifact_type=artifact_type,
@@ -7231,12 +7126,6 @@ class ModelRegistryServiceApi:
     async def get_experiment_run_artifacts_with_http_info(
         self,
         experimentrun_id: Annotated[StrictStr, Field(description="A unique identifier for an `ExperimentRun`.")],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
         artifact_type: Annotated[
@@ -7262,12 +7151,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[ArtifactList]:
-        r"""List all artifacts associated with the `ExperimentRun`.
+        """List all artifacts associated with the `ExperimentRun`.
 
         :param experimentrun_id: A unique identifier for an `ExperimentRun`. (required)
         :type experimentrun_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param external_id: External ID of entity to search.
@@ -7305,7 +7192,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_experiment_run_artifacts_serialize(
             experimentrun_id=experimentrun_id,
-            filter_query=filter_query,
             name=name,
             external_id=external_id,
             artifact_type=artifact_type,
@@ -7337,12 +7223,6 @@ class ModelRegistryServiceApi:
     async def get_experiment_run_artifacts_without_preload_content(
         self,
         experimentrun_id: Annotated[StrictStr, Field(description="A unique identifier for an `ExperimentRun`.")],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
         artifact_type: Annotated[
@@ -7368,12 +7248,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List all artifacts associated with the `ExperimentRun`.
+        """List all artifacts associated with the `ExperimentRun`.
 
         :param experimentrun_id: A unique identifier for an `ExperimentRun`. (required)
         :type experimentrun_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param external_id: External ID of entity to search.
@@ -7411,7 +7289,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_experiment_run_artifacts_serialize(
             experimentrun_id=experimentrun_id,
-            filter_query=filter_query,
             name=name,
             external_id=external_id,
             artifact_type=artifact_type,
@@ -7438,7 +7315,6 @@ class ModelRegistryServiceApi:
     def _get_experiment_run_artifacts_serialize(
         self,
         experimentrun_id,
-        filter_query,
         name,
         external_id,
         artifact_type,
@@ -7467,10 +7343,6 @@ class ModelRegistryServiceApi:
         if experimentrun_id is not None:
             _path_params["experimentrunId"] = experimentrun_id
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if name is not None:
 
             _query_params.append(("name", name))
@@ -7528,12 +7400,6 @@ class ModelRegistryServiceApi:
     async def get_experiment_run_metric_history(
         self,
         experimentrun_id: Annotated[StrictStr, Field(description="A unique identifier for an `ExperimentRun`.")],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         step_ids: Annotated[
             Optional[StrictStr], Field(description="Comma-separated list of step IDs to filter metrics by.")
@@ -7558,14 +7424,12 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ArtifactList:
-        r"""Get metric history for an ExperimentRun.
+        """Get metric history for an ExperimentRun.
 
         Gets the metric history for an `ExperimentRun` with optional filtering by metric name and step IDs.
 
         :param experimentrun_id: A unique identifier for an `ExperimentRun`. (required)
         :type experimentrun_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param step_ids: Comma-separated list of step IDs to filter metrics by.
@@ -7601,7 +7465,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_experiment_run_metric_history_serialize(
             experimentrun_id=experimentrun_id,
-            filter_query=filter_query,
             name=name,
             step_ids=step_ids,
             page_size=page_size,
@@ -7632,12 +7495,6 @@ class ModelRegistryServiceApi:
     async def get_experiment_run_metric_history_with_http_info(
         self,
         experimentrun_id: Annotated[StrictStr, Field(description="A unique identifier for an `ExperimentRun`.")],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         step_ids: Annotated[
             Optional[StrictStr], Field(description="Comma-separated list of step IDs to filter metrics by.")
@@ -7662,14 +7519,12 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[ArtifactList]:
-        r"""Get metric history for an ExperimentRun.
+        """Get metric history for an ExperimentRun.
 
         Gets the metric history for an `ExperimentRun` with optional filtering by metric name and step IDs.
 
         :param experimentrun_id: A unique identifier for an `ExperimentRun`. (required)
         :type experimentrun_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param step_ids: Comma-separated list of step IDs to filter metrics by.
@@ -7705,7 +7560,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_experiment_run_metric_history_serialize(
             experimentrun_id=experimentrun_id,
-            filter_query=filter_query,
             name=name,
             step_ids=step_ids,
             page_size=page_size,
@@ -7736,12 +7590,6 @@ class ModelRegistryServiceApi:
     async def get_experiment_run_metric_history_without_preload_content(
         self,
         experimentrun_id: Annotated[StrictStr, Field(description="A unique identifier for an `ExperimentRun`.")],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         step_ids: Annotated[
             Optional[StrictStr], Field(description="Comma-separated list of step IDs to filter metrics by.")
@@ -7766,14 +7614,12 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""Get metric history for an ExperimentRun.
+        """Get metric history for an ExperimentRun.
 
         Gets the metric history for an `ExperimentRun` with optional filtering by metric name and step IDs.
 
         :param experimentrun_id: A unique identifier for an `ExperimentRun`. (required)
         :type experimentrun_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param step_ids: Comma-separated list of step IDs to filter metrics by.
@@ -7809,7 +7655,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_experiment_run_metric_history_serialize(
             experimentrun_id=experimentrun_id,
-            filter_query=filter_query,
             name=name,
             step_ids=step_ids,
             page_size=page_size,
@@ -7835,7 +7680,6 @@ class ModelRegistryServiceApi:
     def _get_experiment_run_metric_history_serialize(
         self,
         experimentrun_id,
-        filter_query,
         name,
         step_ids,
         page_size,
@@ -7863,10 +7707,6 @@ class ModelRegistryServiceApi:
         if experimentrun_id is not None:
             _path_params["experimentrunId"] = experimentrun_id
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if name is not None:
 
             _query_params.append(("name", name))
@@ -7919,12 +7759,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_experiment_runs(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -7945,12 +7779,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ExperimentRunList:
-        r"""List All ExperimentRuns.
+        """List All ExperimentRuns.
 
         Gets a list of all `ExperimentRun` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -7981,7 +7813,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_experiment_runs_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -8008,12 +7839,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_experiment_runs_with_http_info(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -8034,12 +7859,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[ExperimentRunList]:
-        r"""List All ExperimentRuns.
+        """List All ExperimentRuns.
 
         Gets a list of all `ExperimentRun` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -8070,7 +7893,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_experiment_runs_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -8097,12 +7919,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_experiment_runs_without_preload_content(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -8123,12 +7939,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List All ExperimentRuns.
+        """List All ExperimentRuns.
 
         Gets a list of all `ExperimentRun` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -8159,7 +7973,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_experiment_runs_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -8181,7 +7994,6 @@ class ModelRegistryServiceApi:
 
     def _get_experiment_runs_serialize(
         self,
-        filter_query,
         page_size,
         order_by,
         sort_order,
@@ -8205,10 +8017,6 @@ class ModelRegistryServiceApi:
 
         # process the path parameters
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if page_size is not None:
 
             _query_params.append(("pageSize", page_size))
@@ -8253,12 +8061,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_experiments(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -8279,12 +8081,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ExperimentList:
-        r"""List All Experiments.
+        """List All Experiments.
 
         Gets a list of all `Experiment` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -8315,7 +8115,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_experiments_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -8342,12 +8141,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_experiments_with_http_info(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -8368,12 +8161,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[ExperimentList]:
-        r"""List All Experiments.
+        """List All Experiments.
 
         Gets a list of all `Experiment` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -8404,7 +8195,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_experiments_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -8431,12 +8221,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_experiments_without_preload_content(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -8457,12 +8241,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List All Experiments.
+        """List All Experiments.
 
         Gets a list of all `Experiment` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -8493,7 +8275,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_experiments_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -8515,7 +8296,6 @@ class ModelRegistryServiceApi:
 
     def _get_experiments_serialize(
         self,
-        filter_query,
         page_size,
         order_by,
         sort_order,
@@ -8539,10 +8319,6 @@ class ModelRegistryServiceApi:
 
         # process the path parameters
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if page_size is not None:
 
             _query_params.append(("pageSize", page_size))
@@ -9056,12 +8832,6 @@ class ModelRegistryServiceApi:
     async def get_inference_service_serves(
         self,
         inferenceservice_id: Annotated[StrictStr, Field(description="A unique identifier for a `InferenceService`.")],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
@@ -9084,14 +8854,12 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ServeModelList:
-        r"""List All InferenceService's ServeModel actions.
+        """List All InferenceService's ServeModel actions.
 
         Gets a list of all `ServeModel` entities for the `InferenceService`.
 
         :param inferenceservice_id: A unique identifier for a `InferenceService`. (required)
         :type inferenceservice_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param external_id: External ID of entity to search.
@@ -9127,7 +8895,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_inference_service_serves_serialize(
             inferenceservice_id=inferenceservice_id,
-            filter_query=filter_query,
             name=name,
             external_id=external_id,
             page_size=page_size,
@@ -9158,12 +8925,6 @@ class ModelRegistryServiceApi:
     async def get_inference_service_serves_with_http_info(
         self,
         inferenceservice_id: Annotated[StrictStr, Field(description="A unique identifier for a `InferenceService`.")],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
@@ -9186,14 +8947,12 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[ServeModelList]:
-        r"""List All InferenceService's ServeModel actions.
+        """List All InferenceService's ServeModel actions.
 
         Gets a list of all `ServeModel` entities for the `InferenceService`.
 
         :param inferenceservice_id: A unique identifier for a `InferenceService`. (required)
         :type inferenceservice_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param external_id: External ID of entity to search.
@@ -9229,7 +8988,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_inference_service_serves_serialize(
             inferenceservice_id=inferenceservice_id,
-            filter_query=filter_query,
             name=name,
             external_id=external_id,
             page_size=page_size,
@@ -9260,12 +9018,6 @@ class ModelRegistryServiceApi:
     async def get_inference_service_serves_without_preload_content(
         self,
         inferenceservice_id: Annotated[StrictStr, Field(description="A unique identifier for a `InferenceService`.")],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
@@ -9288,14 +9040,12 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List All InferenceService's ServeModel actions.
+        """List All InferenceService's ServeModel actions.
 
         Gets a list of all `ServeModel` entities for the `InferenceService`.
 
         :param inferenceservice_id: A unique identifier for a `InferenceService`. (required)
         :type inferenceservice_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param external_id: External ID of entity to search.
@@ -9331,7 +9081,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_inference_service_serves_serialize(
             inferenceservice_id=inferenceservice_id,
-            filter_query=filter_query,
             name=name,
             external_id=external_id,
             page_size=page_size,
@@ -9357,7 +9106,6 @@ class ModelRegistryServiceApi:
     def _get_inference_service_serves_serialize(
         self,
         inferenceservice_id,
-        filter_query,
         name,
         external_id,
         page_size,
@@ -9385,10 +9133,6 @@ class ModelRegistryServiceApi:
         if inferenceservice_id is not None:
             _path_params["inferenceserviceId"] = inferenceservice_id
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if name is not None:
 
             _query_params.append(("name", name))
@@ -9675,12 +9419,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_inference_services(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -9701,12 +9439,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> InferenceServiceList:
-        r"""List All InferenceServices.
+        """List All InferenceServices.
 
         Gets a list of all `InferenceService` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -9737,7 +9473,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_inference_services_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -9766,12 +9501,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_inference_services_with_http_info(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -9792,12 +9521,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[InferenceServiceList]:
-        r"""List All InferenceServices.
+        """List All InferenceServices.
 
         Gets a list of all `InferenceService` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -9828,7 +9555,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_inference_services_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -9857,12 +9583,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_inference_services_without_preload_content(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -9883,12 +9603,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List All InferenceServices.
+        """List All InferenceServices.
 
         Gets a list of all `InferenceService` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -9919,7 +9637,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_inference_services_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -9943,7 +9660,6 @@ class ModelRegistryServiceApi:
 
     def _get_inference_services_serialize(
         self,
-        filter_query,
         page_size,
         order_by,
         sort_order,
@@ -9967,10 +9683,6 @@ class ModelRegistryServiceApi:
 
         # process the path parameters
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if page_size is not None:
 
             _query_params.append(("pageSize", page_size))
@@ -10249,12 +9961,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_model_artifacts(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -10275,12 +9981,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ModelArtifactList:
-        r"""List All ModelArtifacts.
+        """List All ModelArtifacts.
 
         Gets a list of all `ModelArtifact` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -10311,7 +10015,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_model_artifacts_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -10340,12 +10043,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_model_artifacts_with_http_info(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -10366,12 +10063,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[ModelArtifactList]:
-        r"""List All ModelArtifacts.
+        """List All ModelArtifacts.
 
         Gets a list of all `ModelArtifact` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -10402,7 +10097,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_model_artifacts_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -10431,12 +10125,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_model_artifacts_without_preload_content(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -10457,12 +10145,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List All ModelArtifacts.
+        """List All ModelArtifacts.
 
         Gets a list of all `ModelArtifact` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -10493,7 +10179,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_model_artifacts_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -10517,7 +10202,6 @@ class ModelRegistryServiceApi:
 
     def _get_model_artifacts_serialize(
         self,
-        filter_query,
         page_size,
         order_by,
         sort_order,
@@ -10541,10 +10225,6 @@ class ModelRegistryServiceApi:
 
         # process the path parameters
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if page_size is not None:
 
             _query_params.append(("pageSize", page_size))
@@ -10824,12 +10504,6 @@ class ModelRegistryServiceApi:
     async def get_model_version_artifacts(
         self,
         modelversion_id: Annotated[StrictStr, Field(description="A unique identifier for a `ModelVersion`.")],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
         artifact_type: Annotated[
@@ -10855,12 +10529,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ArtifactList:
-        r"""List all artifacts associated with the `ModelVersion`.
+        """List all artifacts associated with the `ModelVersion`.
 
         :param modelversion_id: A unique identifier for a `ModelVersion`. (required)
         :type modelversion_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param external_id: External ID of entity to search.
@@ -10898,7 +10570,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_model_version_artifacts_serialize(
             modelversion_id=modelversion_id,
-            filter_query=filter_query,
             name=name,
             external_id=external_id,
             artifact_type=artifact_type,
@@ -10930,12 +10601,6 @@ class ModelRegistryServiceApi:
     async def get_model_version_artifacts_with_http_info(
         self,
         modelversion_id: Annotated[StrictStr, Field(description="A unique identifier for a `ModelVersion`.")],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
         artifact_type: Annotated[
@@ -10961,12 +10626,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[ArtifactList]:
-        r"""List all artifacts associated with the `ModelVersion`.
+        """List all artifacts associated with the `ModelVersion`.
 
         :param modelversion_id: A unique identifier for a `ModelVersion`. (required)
         :type modelversion_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param external_id: External ID of entity to search.
@@ -11004,7 +10667,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_model_version_artifacts_serialize(
             modelversion_id=modelversion_id,
-            filter_query=filter_query,
             name=name,
             external_id=external_id,
             artifact_type=artifact_type,
@@ -11036,12 +10698,6 @@ class ModelRegistryServiceApi:
     async def get_model_version_artifacts_without_preload_content(
         self,
         modelversion_id: Annotated[StrictStr, Field(description="A unique identifier for a `ModelVersion`.")],
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
         artifact_type: Annotated[
@@ -11067,12 +10723,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List all artifacts associated with the `ModelVersion`.
+        """List all artifacts associated with the `ModelVersion`.
 
         :param modelversion_id: A unique identifier for a `ModelVersion`. (required)
         :type modelversion_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param name: Name of entity to search.
         :type name: str
         :param external_id: External ID of entity to search.
@@ -11110,7 +10764,6 @@ class ModelRegistryServiceApi:
         """  # noqa: E501
         _param = self._get_model_version_artifacts_serialize(
             modelversion_id=modelversion_id,
-            filter_query=filter_query,
             name=name,
             external_id=external_id,
             artifact_type=artifact_type,
@@ -11137,7 +10790,6 @@ class ModelRegistryServiceApi:
     def _get_model_version_artifacts_serialize(
         self,
         modelversion_id,
-        filter_query,
         name,
         external_id,
         artifact_type,
@@ -11166,10 +10818,6 @@ class ModelRegistryServiceApi:
         if modelversion_id is not None:
             _path_params["modelversionId"] = modelversion_id
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if name is not None:
 
             _query_params.append(("name", name))
@@ -11226,12 +10874,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_model_versions(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -11252,12 +10894,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ModelVersionList:
-        r"""List All ModelVersions.
+        """List All ModelVersions.
 
         Gets a list of all `ModelVersion` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -11288,7 +10928,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_model_versions_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -11315,12 +10954,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_model_versions_with_http_info(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -11341,12 +10974,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[ModelVersionList]:
-        r"""List All ModelVersions.
+        """List All ModelVersions.
 
         Gets a list of all `ModelVersion` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -11377,7 +11008,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_model_versions_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -11404,12 +11034,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_model_versions_without_preload_content(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -11430,12 +11054,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List All ModelVersions.
+        """List All ModelVersions.
 
         Gets a list of all `ModelVersion` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -11466,7 +11088,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_model_versions_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -11488,7 +11109,6 @@ class ModelRegistryServiceApi:
 
     def _get_model_versions_serialize(
         self,
-        filter_query,
         page_size,
         order_by,
         sort_order,
@@ -11512,10 +11132,6 @@ class ModelRegistryServiceApi:
 
         # process the path parameters
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if page_size is not None:
 
             _query_params.append(("pageSize", page_size))
@@ -11797,12 +11413,6 @@ class ModelRegistryServiceApi:
         registeredmodel_id: Annotated[StrictStr, Field(description="A unique identifier for a `RegisteredModel`.")],
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -11823,7 +11433,7 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ModelVersionList:
-        r"""List All RegisteredModel's ModelVersions.
+        """List All RegisteredModel's ModelVersions.
 
         Gets a list of all `ModelVersion` entities for the `RegisteredModel`.
 
@@ -11833,8 +11443,6 @@ class ModelRegistryServiceApi:
         :type name: str
         :param external_id: External ID of entity to search.
         :type external_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -11868,7 +11476,6 @@ class ModelRegistryServiceApi:
             registeredmodel_id=registeredmodel_id,
             name=name,
             external_id=external_id,
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -11899,12 +11506,6 @@ class ModelRegistryServiceApi:
         registeredmodel_id: Annotated[StrictStr, Field(description="A unique identifier for a `RegisteredModel`.")],
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -11925,7 +11526,7 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[ModelVersionList]:
-        r"""List All RegisteredModel's ModelVersions.
+        """List All RegisteredModel's ModelVersions.
 
         Gets a list of all `ModelVersion` entities for the `RegisteredModel`.
 
@@ -11935,8 +11536,6 @@ class ModelRegistryServiceApi:
         :type name: str
         :param external_id: External ID of entity to search.
         :type external_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -11970,7 +11569,6 @@ class ModelRegistryServiceApi:
             registeredmodel_id=registeredmodel_id,
             name=name,
             external_id=external_id,
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -12001,12 +11599,6 @@ class ModelRegistryServiceApi:
         registeredmodel_id: Annotated[StrictStr, Field(description="A unique identifier for a `RegisteredModel`.")],
         name: Annotated[Optional[StrictStr], Field(description="Name of entity to search.")] = None,
         external_id: Annotated[Optional[StrictStr], Field(description="External ID of entity to search.")] = None,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -12027,7 +11619,7 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List All RegisteredModel's ModelVersions.
+        """List All RegisteredModel's ModelVersions.
 
         Gets a list of all `ModelVersion` entities for the `RegisteredModel`.
 
@@ -12037,8 +11629,6 @@ class ModelRegistryServiceApi:
         :type name: str
         :param external_id: External ID of entity to search.
         :type external_id: str
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -12072,7 +11662,6 @@ class ModelRegistryServiceApi:
             registeredmodel_id=registeredmodel_id,
             name=name,
             external_id=external_id,
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -12098,7 +11687,6 @@ class ModelRegistryServiceApi:
         registeredmodel_id,
         name,
         external_id,
-        filter_query,
         page_size,
         order_by,
         sort_order,
@@ -12131,10 +11719,6 @@ class ModelRegistryServiceApi:
         if external_id is not None:
 
             _query_params.append(("externalId", external_id))
-
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
 
         if page_size is not None:
 
@@ -12180,12 +11764,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_registered_models(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -12206,12 +11784,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RegisteredModelList:
-        r"""List All RegisteredModels.
+        """List All RegisteredModels.
 
         Gets a list of all `RegisteredModel` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -12242,7 +11818,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_registered_models_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -12269,12 +11844,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_registered_models_with_http_info(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -12295,12 +11864,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[RegisteredModelList]:
-        r"""List All RegisteredModels.
+        """List All RegisteredModels.
 
         Gets a list of all `RegisteredModel` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -12331,7 +11898,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_registered_models_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -12358,12 +11924,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_registered_models_without_preload_content(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -12384,12 +11944,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List All RegisteredModels.
+        """List All RegisteredModels.
 
         Gets a list of all `RegisteredModel` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -12420,7 +11978,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_registered_models_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -12442,7 +11999,6 @@ class ModelRegistryServiceApi:
 
     def _get_registered_models_serialize(
         self,
-        filter_query,
         page_size,
         order_by,
         sort_order,
@@ -12466,10 +12022,6 @@ class ModelRegistryServiceApi:
 
         # process the path parameters
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if page_size is not None:
 
             _query_params.append(("pageSize", page_size))
@@ -12754,12 +12306,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_serving_environments(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -12780,12 +12326,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ServingEnvironmentList:
-        r"""List All ServingEnvironments.
+        """List All ServingEnvironments.
 
         Gets a list of all `ServingEnvironment` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -12816,7 +12360,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_serving_environments_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -12843,12 +12386,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_serving_environments_with_http_info(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -12869,12 +12406,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> ApiResponse[ServingEnvironmentList]:
-        r"""List All ServingEnvironments.
+        """List All ServingEnvironments.
 
         Gets a list of all `ServingEnvironment` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -12905,7 +12440,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_serving_environments_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -12932,12 +12466,6 @@ class ModelRegistryServiceApi:
     @validate_call
     async def get_serving_environments_without_preload_content(
         self,
-        filter_query: Annotated[
-            Optional[StrictStr],
-            Field(
-                description='A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `"value"` or `\'value\'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = "my-model"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE "%tensorflow%"` - Complex: `(name = "model-a" OR name = "model-b") AND state = "LIVE"` - Custom property: `framework.string_value = "pytorch"` - Escaped property: `` `mlflow.source.type` = "notebook" `` '
-            ),
-        ] = None,
         page_size: Annotated[Optional[StrictStr], Field(description="Number of entities in each page.")] = None,
         order_by: Annotated[
             Optional[OrderByField], Field(description="Specifies the order by criteria for listing entities.")
@@ -12958,12 +12486,10 @@ class ModelRegistryServiceApi:
         _headers: Optional[dict[StrictStr, Any]] = None,
         _host_index: Annotated[StrictInt, Field(ge=0, le=0)] = 0,
     ) -> RESTResponseType:
-        r"""List All ServingEnvironments.
+        """List All ServingEnvironments.
 
         Gets a list of all `ServingEnvironment` entities.
 
-        :param filter_query: A SQL-like query string to filter the list of entities. The query supports rich filtering capabilities with automatic type inference.  **Supported Operators:** - Comparison: `=`, `!=`, `<>`, `>`, `<`, `>=`, `<=` - Pattern matching: `LIKE`, `ILIKE` (case-insensitive) - Set membership: `IN` - Logical: `AND`, `OR` - Grouping: `()` for complex expressions  **Data Types:** - Strings: `\"value\"` or `'value'` - Numbers: `42`, `3.14`, `1e-5` - Booleans: `true`, `false` (case-insensitive)  **Property Access:** - Standard properties: `name`, `id`, `state`, `createTimeSinceEpoch` - Custom properties: Any user-defined property name - Escaped properties: Use backticks for special characters: `` `custom-property` `` - Type-specific access: `property.string_value`, `property.double_value`, `property.int_value`, `property.bool_value`  **Examples:** - Basic: `name = \"my-model\"` - Comparison: `accuracy > 0.95` - Pattern: `name LIKE \"%tensorflow%\"` - Complex: `(name = \"model-a\" OR name = \"model-b\") AND state = \"LIVE\"` - Custom property: `framework.string_value = \"pytorch\"` - Escaped property: `` `mlflow.source.type` = \"notebook\" ``
-        :type filter_query: str
         :param page_size: Number of entities in each page.
         :type page_size: str
         :param order_by: Specifies the order by criteria for listing entities.
@@ -12994,7 +12520,6 @@ class ModelRegistryServiceApi:
         :return: Returns the result object.
         """  # noqa: E501
         _param = self._get_serving_environments_serialize(
-            filter_query=filter_query,
             page_size=page_size,
             order_by=order_by,
             sort_order=sort_order,
@@ -13016,7 +12541,6 @@ class ModelRegistryServiceApi:
 
     def _get_serving_environments_serialize(
         self,
-        filter_query,
         page_size,
         order_by,
         sort_order,
@@ -13040,10 +12564,6 @@ class ModelRegistryServiceApi:
 
         # process the path parameters
         # process the query parameters
-        if filter_query is not None:
-
-            _query_params.append(("filterQuery", filter_query))
-
         if page_size is not None:
 
             _query_params.append(("pageSize", page_size))
