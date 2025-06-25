@@ -1,0 +1,170 @@
+import time
+from contextlib import AbstractContextManager
+from dataclasses import dataclass
+from typing import Any, Callable, Literal
+
+from model_registry.core import ModelRegistryAPIClient
+from model_registry.types.artifacts import (
+    DataSet,
+    ExperimentRunArtifact,
+    ExperimentRunArtifactTypes,
+    Metric,
+    Parameter,
+    ParameterType,
+)
+from model_registry.types.experiments import ExperimentRun
+
+LogType = Literal["params", "metrics", "datasets"]
+
+
+@dataclass
+class RunInfo:
+    experiment_id: str
+    id: str
+    name: str
+
+
+class ActiveExperimentRun(AbstractContextManager):
+    def __init__(
+        self,
+        experiment_run: ExperimentRun,
+        api: ModelRegistryAPIClient,
+        async_runner: Callable,
+    ):
+        self.info = RunInfo(
+            id=experiment_run.id,
+            name=experiment_run.name,
+            experiment_id=experiment_run.experiment_id,
+        )
+        self.__exp_run = experiment_run
+        self.__api = api
+        self.__async_runner = async_runner
+        self._logs: ExperimentRunArtifactTypes = ExperimentRunArtifactTypes()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        """Exit the context manager and upsert the logs to the experiment run."""
+        temp_artifacts: ExperimentRunArtifactTypes = ExperimentRunArtifactTypes()
+        for log in self.get_logs():
+            server_log = self.__async_runner(
+                self.__api.upsert_experiment_run_artifact(
+                    experiment_run_id=self.__exp_run.id, artifact=log
+                )
+            )
+            log_type = type(server_log)
+            if log_type is Parameter:
+                temp_artifacts.params[log.name] = server_log
+            elif log_type is Metric:
+                temp_artifacts.metrics[log.name] = server_log
+            elif log_type is DataSet:
+                temp_artifacts.datasets[log.name] = server_log
+        self._logs = temp_artifacts
+
+    def log_param(self, key: str, value: Any, *, description: str | None = None):
+        """Log a parameter to the experiment run.
+
+        The parameter type is inferred from the value type.
+
+        Args:
+            key: Name of the parameter.
+            value: Value of the parameter.
+
+        Keyword Args:
+            description: Description of the parameter.
+        """
+        param_type = ParameterType.STRING
+        if isinstance(value, bool):
+            param_type = ParameterType.BOOLEAN
+        elif isinstance(value, (int, float)):
+            # TODO: ensure for numpy and other numeric types
+            param_type = ParameterType.NUMBER
+        else:
+            param_type = ParameterType.OBJECT
+        self._logs.params[key] = Parameter(
+            name=key,
+            value=value,
+            description=description,
+            parameter_type=param_type,
+        )
+
+    def log_metric(
+        self,
+        key: str,
+        value: Any,
+        step: int = 0,
+        timestamp: int | None = None,
+        *,
+        description: str | None = None,
+    ):
+        """Log a metric to the experiment run.
+
+        Args:
+            key: Name of the metric.
+            value: Value of the metric.
+            step: Step number for multi-step metrics (e.g., training epochs).
+            timestamp: Unix timestamp in milliseconds when the metric was recorded.
+
+        Keyword Args:
+            description: Description of the metric.
+        """
+        self._logs.metrics[key] = Metric(
+            name=key,
+            value=value,
+            step=step,
+            timestamp=timestamp or str(int(time.time() * 1000)),
+            description=description,
+        )
+
+    def log_dataset(
+        self,
+        name: str | None = None,
+        uri: str | None = None,
+        source_type: str | None = None,
+        source: str | None = None,
+        schema: dict | None = None,
+        profile: dict | None = None,
+        *,
+        description: str | None = None,
+    ):
+        """Log a dataset to the experiment run.
+
+        Args:
+            name: The name of the dataset.
+            uri: Value of the dataset.
+            source_type: Type of the source for the dataset.
+            source: Location or connection string for the dataset source.
+            schema: JSON schema or description of the dataset structure.
+            profile: Statistical profile or summary of the dataset.
+
+        Keyword Args:
+            description: Description of the dataset.
+        """
+        # TODO: add support for automatic integration to upload and store
+        self._logs.datasets[name] = DataSet(
+            name=name,
+            uri=uri,
+            source_type=source_type,
+            source=source,
+            schema=schema,
+            profile=profile,
+            description=description,
+        )
+
+    def get_log(self, type: LogType, key: str) -> ExperimentRunArtifact:
+        """Get a log from the experiment run.
+
+        Args:
+            type: Type of the log (params, metrics, or datasets).
+            key: Key of the log.
+        """
+        return self._logs.__getattribute__(type)[key]
+
+    def get_logs(self) -> list[ExperimentRunArtifact]:
+        """Return every recorded artifact (params + metrics) in one flat list."""
+        params = self._logs.params.values()
+        metrics = self._logs.metrics.values()
+        datasets = self._logs.datasets.values()
+
+        return list(params) + list(metrics) + list(datasets)
