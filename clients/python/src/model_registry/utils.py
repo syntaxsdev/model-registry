@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 import tempfile
+import uuid
 from dataclasses import dataclass
 from pathlib import Path
 from subprocess import CalledProcessError
@@ -632,3 +633,21 @@ def _extract_auth_json(auth_data: str) -> str:
     except json.JSONDecodeError as e:
         invalid_json_msg = "Auth data does not contain valid JSON."
         raise ValueError(invalid_json_msg) from e
+
+
+def short_uuid(size: int = 8) -> str:
+    """Generate a short UUID.
+
+    Returns:
+        A short UUID.
+    """
+    return str(uuid.uuid4())[:size]
+
+
+def generate_name(prefix: str) -> str:
+    """Generate a random name.
+
+    Returns:
+        A random name for experiments.
+    """
+    return f"{prefix}_{short_uuid()}"
