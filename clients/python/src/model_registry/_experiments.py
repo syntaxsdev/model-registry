@@ -1,6 +1,6 @@
 import time
 from contextlib import AbstractContextManager
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Any, Callable, Literal
 
 from model_registry.core import ModelRegistryAPIClient
