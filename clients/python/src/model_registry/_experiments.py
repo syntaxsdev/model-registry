@@ -1,10 +1,12 @@
 import time
 from contextlib import AbstractContextManager
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from typing import Any, Callable, Literal
 
 from model_registry.core import ModelRegistryAPIClient
+from model_registry.exceptions import StoreError
 from model_registry.types.artifacts import (
+    ArtifactState,
     DataSet,
     ExperimentRunArtifact,
     ExperimentRunArtifactTypes,
@@ -13,6 +15,8 @@ from model_registry.types.artifacts import (
     ParameterType,
 )
 from model_registry.types.experiments import ExperimentRun
+
+from .utils import S3Params, _connect_to_s3, _upload_to_s3
 
 LogType = Literal["params", "metrics", "datasets"]
 
@@ -113,6 +117,7 @@ class ActiveExperimentRun(AbstractContextManager):
             name=key,
             value=value,
             step=step,
+            state=ArtifactState.LIVE,
             timestamp=timestamp or str(int(time.time() * 1000)),
             description=description,
         )
@@ -127,12 +132,14 @@ class ActiveExperimentRun(AbstractContextManager):
         profile: dict | None = None,
         *,
         description: str | None = None,
+        file_path: str | None = None,
+        s3_auth: S3Params | None = None,
     ):
         """Log a dataset to the experiment run.
 
         Args:
             name: The name of the dataset.
-            uri: Value of the dataset.
+            uri: The uri of the dataset if already uploaded to S3.
             source_type: Type of the source for the dataset.
             source: Location or connection string for the dataset source.
             schema: JSON schema or description of the dataset structure.
@@ -140,8 +147,29 @@ class ActiveExperimentRun(AbstractContextManager):
 
         Keyword Args:
             description: Description of the dataset.
+            file_path: The path to the dataset file.
+            s3_auth: S3Params for uploading the dataset to S3.
         """
-        # TODO: add support for automatic integration to upload and store
+        if not uri and not file_path:
+            msg = "Either `uri` or `file_path` must be provided."
+            raise ValueError(msg)
+        try:
+            s3, transfer_config = _connect_to_s3(**asdict(s3_auth))
+            uri = (
+                _upload_to_s3(
+                    path=file_path,
+                    path_prefix=s3_auth.s3_prefix,
+                    bucket=s3_auth.bucket_name,
+                    multipart_threshold=s3_auth.multipart_threshold,
+                    multipart_chunksize=s3_auth.multipart_chunksize,
+                    max_pool_connections=s3_auth.max_pool_connections,
+                )
+                if file_path
+                else uri
+            )
+        except Exception as e:
+            msg = f"Failed to upload dataset to S3: {e}"
+            raise StoreError(msg) from e
         self._logs.datasets[name] = DataSet(
             name=name,
             uri=uri,
