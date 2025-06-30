@@ -16,7 +16,7 @@ from model_registry.types.artifacts import (
 )
 from model_registry.types.experiments import ExperimentRun
 
-from .utils import S3Params, _connect_to_s3, _upload_to_s3
+from .utils import S3Params, upload_to_s3
 
 LogType = Literal["params", "metrics", "datasets"]
 
@@ -154,15 +154,10 @@ class ActiveExperimentRun(AbstractContextManager):
             msg = "Either `uri` or `file_path` must be provided."
             raise ValueError(msg)
         try:
-            s3, transfer_config = _connect_to_s3(**asdict(s3_auth))
             uri = (
-                _upload_to_s3(
+                upload_to_s3(
+                    s3_auth=s3_auth,
                     path=file_path,
-                    path_prefix=s3_auth.s3_prefix,
-                    bucket=s3_auth.bucket_name,
-                    multipart_threshold=s3_auth.multipart_threshold,
-                    multipart_chunksize=s3_auth.multipart_chunksize,
-                    max_pool_connections=s3_auth.max_pool_connections,
                 )
                 if file_path
                 else uri
