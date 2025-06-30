@@ -8,7 +8,7 @@ import os
 import shutil
 import tempfile
 import uuid
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 from subprocess import CalledProcessError
 from typing import TYPE_CHECKING, Callable, Protocol, TypeVar
@@ -651,3 +651,41 @@ def generate_name(prefix: str) -> str:
         A random name for experiments.
     """
     return f"{prefix}_{short_uuid()}"
+
+
+def upload_to_s3(
+    s3_auth: S3Params,
+    path: str,
+    s3_client: BaseClient | None = None,
+    transfer_config: TransferConfig | None = None,
+) -> str:
+    """Upload to S3.
+
+    Args:
+        s3_auth: The S3 authentication parameters.
+        path: The path to the file or directory to upload.
+        s3_client: The S3 client to use. If not provided, a new client will be created.
+        transfer_config: The transfer config to use for the upload. If not provided, a new transfer config will be created.
+    """
+    if s3_client and not transfer_config:
+        msg = (
+            "Both `transfer_config` and `s3_client` must be provided if S3 is provided."
+        )
+        raise ValueError(msg)
+
+    if not s3_client:
+        s3_auth_dict = asdict(s3_auth)
+        s3_auth_dict.pop("bucket_name")
+        s3_auth_dict.pop("s3_prefix")
+        s3, transfer_config = _connect_to_s3(**s3_auth_dict)
+        print("xS3", s3)
+    else:
+        s3 = s3_client
+
+    return _upload_to_s3(
+        path=path,
+        bucket=s3_auth.bucket_name,
+        s3=s3,
+        path_prefix=s3_auth.s3_prefix,
+        transfer_config=transfer_config,
+    )

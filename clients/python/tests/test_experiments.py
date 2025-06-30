@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from model_registry import ModelRegistry
+from model_registry import ModelRegistry, utils
 
 
 @pytest.fixture
@@ -47,7 +47,9 @@ def test_start_experiment_run(client: ModelRegistry, schema_json: str):
 
 
 @pytest.mark.e2e
-def test_start_experiment_run_with_advanced_scenarios(client: ModelRegistry):
+def test_start_experiment_run_with_advanced_scenarios(
+    client: ModelRegistry, get_temp_dir_with_models, patch_s3_env, schema_json: str
+):
     with client.start_experiment_run(experiment_name="Experiment_Test") as run:
         run.log_param("input1", 5.75)
         run.log_param("input1", 500)
@@ -56,6 +58,39 @@ def test_start_experiment_run_with_advanced_scenarios(client: ModelRegistry):
 
     assert len(run.get_logs()) == 11
     assert run.get_log("params", "input1").value == 500
+
+    with client.start_experiment_run(
+        experiment_name="Experiment_Test_URI_Provided"
+    ) as run:
+        run.log_dataset(
+            name="dataset_1",
+            source_type="s3",
+            uri="s3://datasets/test",
+            schema=schema_json,
+            profile="random_profile",
+        )
+    assert run.get_log("datasets", "dataset_1").uri == "s3://datasets/test"
+
+    # Test actual
+    model_dir, _ = get_temp_dir_with_models
+    bucket, s3_endpoint, access_key_id, secret_access_key, region = patch_s3_env
+    with client.start_experiment_run(experiment_name="Experiment_Test_3") as run:
+        run.log_dataset(
+            name="dataset_1",
+            source_type="local",
+            schema=schema_json,
+            profile="random_profile",
+            file_path=model_dir,
+            s3_auth=utils.S3Params(
+                endpoint_url=s3_endpoint,
+                bucket_name=bucket,
+                s3_prefix="datasets",
+                access_key_id=access_key_id,
+                secret_access_key=secret_access_key,
+                region=region,
+            ),
+        )
+    assert run.get_log("datasets", "dataset_1").uri.startswith("s3://")
 
 
 @pytest.mark.e2e
@@ -77,17 +112,24 @@ def test_get_experiment_runs(client: ModelRegistry):
     """
     with client.start_experiment_run(experiment_name="Experiment_Test_3") as run:
         run.log_param("input1", 5.75)
-    runs = client.get_experiment_runs(experiment_name="Experiment_Test_3")
+    runs_by_name = client.get_experiment_runs(experiment_name="Experiment_Test_3")
     runs_by_id = client.get_experiment_runs(experiment_id=run.info.experiment_id)
 
-    assert runs.next_item().id == runs_by_id.next_item().id
+    assert runs_by_name.next_item().id == runs_by_id.next_item().id
+    runs_by_name.restart()
+    runs_by_id.restart()
+
     found_exp_run_by_id = False
     found_exp_run_by_name = False
-    for r in runs:
-        if r.id == run.info.id:
-            found_exp_run_by_id = True
+
+    for r in runs_by_name:
         if r.name == run.info.name:
             found_exp_run_by_name = True
+
+    for r in runs_by_id:
+        if r.id == run.info.id:
+            found_exp_run_by_id = True
+
     assert found_exp_run_by_id
     assert found_exp_run_by_name
 
