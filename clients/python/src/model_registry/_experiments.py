@@ -56,7 +56,6 @@ class ActiveExperimentRun(AbstractContextManager):
         self._logs: ExperimentRunArtifactTypes = ExperimentRunArtifactTypes()
 
     def __enter__(self):
-        # ACTIVE_EXPERIMENT_CONTEXT.set(RunContext(active_runs={self.info.id: self}))
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
