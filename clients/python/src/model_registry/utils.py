@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import base64
+import copy
 import json
 import os
 import shutil
 import tempfile
+import threading
 import uuid
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -678,7 +680,6 @@ def upload_to_s3(
         s3_auth_dict.pop("bucket_name")
         s3_auth_dict.pop("s3_prefix")
         s3, transfer_config = _connect_to_s3(**s3_auth_dict)
-        print("xS3", s3)
     else:
         s3 = s3_client
 
@@ -689,3 +690,22 @@ def upload_to_s3(
         path_prefix=s3_auth.s3_prefix,
         transfer_config=transfer_config,
     )
+
+
+class ThreadSafeVariable:
+    """Thread safe variable."""
+
+    def __init__(self, value: T):
+        """Initialize the thread safe variable."""
+        self.local = threading.local()
+        self._initial_value = value
+
+    def get(self) -> T:
+        """Get the value."""
+        if not hasattr(self.local, "value"):
+            self.local.value = self._initial_value
+        return copy.deepcopy(self.local.value)
+
+    def set(self, value: T) -> None:
+        """Set the value."""
+        self.local.value = value

@@ -6,12 +6,11 @@ import contextlib
 import inspect
 import logging
 import os
-from collections.abc import Coroutine, Mapping
+from collections.abc import Awaitable, Coroutine, Mapping
 from dataclasses import asdict
 from pathlib import Path
 from typing import (
     Any,
-    Awaitable,
     Callable,
     TypeVar,
     Union,
@@ -22,7 +21,7 @@ from warnings import warn
 
 from model_registry.types.artifacts import ExperimentRunArtifact
 
-from ._experiments import ActiveExperimentRun
+from ._experiments import ActiveExperimentRun, RunContext
 from .core import ModelRegistryAPIClient
 from .exceptions import StoreError
 from .types import (
@@ -38,6 +37,7 @@ from .types import (
 from .utils import (
     OCIParams,
     S3Params,
+    ThreadSafeVariable,
     _connect_to_s3,
     _s3_creds,
     _upload_to_s3,
@@ -159,6 +159,7 @@ class ModelRegistry:
             self._api = ModelRegistryAPIClient.insecure_connection(
                 server_address, port, user_token
             )
+        self._active_experiment_context = ThreadSafeVariable(value=RunContext())
         self.get_registered_models().page_size(1)._next_page()
 
     def async_runner(self, coro: Awaitable[TModel]) -> TModel:
@@ -645,6 +646,7 @@ class ModelRegistry:
         owner: str | None = None,
         desc: str | None = None,
         run_desc: str | None = None,
+        nested: bool = False,
     ) -> ActiveExperimentRun:
         """Start an experiment run.
 
@@ -658,19 +660,29 @@ class ModelRegistry:
             owner: Owner of the experiment.
             desc: Description of the experiment.
             run_desc: Description of the run.
+            nested: Whether the run is nested.
 
         Returns:
             Experiment run.
         """
+        # Retrieve the active experiment context and determine nested runs
+        active_exp: RunContext = self._active_experiment_context.get()
+        if active_exp.active and not nested:
+            msg = "Experiment run is already active. Please set nested=True to start a nested run."
+            raise ValueError(msg)
+
         # Ensure argument pairs are provided
-        if not any([experiment_name, experiment_id]):
+        if not any([experiment_name, experiment_id, nested]):
             msg = "Either experiment_name or experiment_id must be provided"
             raise ValueError(msg)
 
+        _parent_obj = {"parent_run_id": active_exp.run_id} if active_exp.active else {}
+
         # Create or retrieve the experiment
-        if experiment_name:
+
+        if experiment_name := experiment_name or active_exp.name:
             exp = self.async_runner(self._api.get_experiment_by_name(experiment_name))
-        elif experiment_id:
+        elif experiment_id := experiment_id or active_exp.id:
             exp = self.async_runner(self._api.get_experiment_by_id(experiment_id))
         else:
             msg = "Either experiment_name or experiment_id must be provided"
@@ -714,14 +726,42 @@ class ModelRegistry:
                         experiment_id=exp.id,
                         name=generate_name("run"),
                         description=run_desc,
+                        custom_properties={**_parent_obj},
                     )
                 )
             )
-            print(f"Experiment Run {exp_run.name} created with ID: {exp_run.id}")
+            print(
+                f"{'Nested ' if nested else ''}Experiment Run {exp_run.name} created with ID: {exp_run.id}"
+            )
+
+        if not active_exp.active:
+            new_ctx = RunContext(
+                id=experiment_id, name=experiment_name, run_id=exp_run.id, active=True
+            )
+            self._active_experiment_context.set(new_ctx)
 
         return ActiveExperimentRun(
-            experiment_run=exp_run, api=self._api, async_runner=self.async_runner
+            thread_safe_ctx=self._active_experiment_context,
+            experiment_run=exp_run,
+            api=self._api,
+            async_runner=self.async_runner,
         )
+
+    def create_experiment(self, name: str) -> Experiment:
+        """Create an experiment.
+
+        Args:
+            name: Name of the experiment.
+        """
+        return self.async_runner(self._api.upsert_experiment(Experiment(name=name)))
+
+    def get_experiment_run(self, run_id: str) -> ExperimentRun:
+        """Get an experiment run.
+
+        Args:
+            run_id: ID of the experiment run.
+        """
+        return self.async_runner(self._api.get_experiment_run_by_id(run_id))
 
     def get_experiments(self) -> Pager[Experiment]:
         """Get a pager for experiments.
