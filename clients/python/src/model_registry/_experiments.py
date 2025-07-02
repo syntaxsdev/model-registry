@@ -1,6 +1,6 @@
 import time
 from contextlib import AbstractContextManager
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from typing import Any, Callable, Literal
 
 from model_registry.core import ModelRegistryAPIClient
@@ -16,9 +16,17 @@ from model_registry.types.artifacts import (
 )
 from model_registry.types.experiments import ExperimentRun
 
-from .utils import S3Params, upload_to_s3
+from .utils import S3Params, ThreadSafeVariable, upload_to_s3
 
 LogType = Literal["params", "metrics", "datasets"]
+
+
+@dataclass
+class RunContext:
+    id: str | None = None
+    name: str | None = None
+    run_id: str | None = None
+    active: bool = False
 
 
 @dataclass
@@ -31,21 +39,24 @@ class RunInfo:
 class ActiveExperimentRun(AbstractContextManager):
     def __init__(
         self,
+        thread_safe_ctx: ThreadSafeVariable,
         experiment_run: ExperimentRun,
         api: ModelRegistryAPIClient,
         async_runner: Callable,
     ):
+        self._thread_safe_ctx = thread_safe_ctx
+        self._exp_run = experiment_run
         self.info = RunInfo(
             id=experiment_run.id,
             name=experiment_run.name,
             experiment_id=experiment_run.experiment_id,
         )
-        self.__exp_run = experiment_run
         self.__api = api
         self.__async_runner = async_runner
         self._logs: ExperimentRunArtifactTypes = ExperimentRunArtifactTypes()
 
     def __enter__(self):
+        # ACTIVE_EXPERIMENT_CONTEXT.set(RunContext(active_runs={self.info.id: self}))
         return self
 
     def __exit__(self, exc_type, exc_value, traceback):
@@ -54,7 +65,7 @@ class ActiveExperimentRun(AbstractContextManager):
         for log in self.get_logs():
             server_log = self.__async_runner(
                 self.__api.upsert_experiment_run_artifact(
-                    experiment_run_id=self.__exp_run.id, artifact=log
+                    experiment_run_id=self.info.id, artifact=log
                 )
             )
             log_type = type(server_log)
@@ -65,6 +76,7 @@ class ActiveExperimentRun(AbstractContextManager):
             elif log_type is DataSet:
                 temp_artifacts.datasets[log.name] = server_log
         self._logs = temp_artifacts
+        self._thread_safe_ctx.set(RunContext(active=False))
 
     def log_param(self, key: str, value: Any, *, description: str | None = None):
         """Log a parameter to the experiment run.

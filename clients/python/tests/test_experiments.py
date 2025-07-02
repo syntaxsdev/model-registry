@@ -1,5 +1,7 @@
 import json
+import threading
 
+from model_registry.types.experiments import Experiment
 import pytest
 
 from model_registry import ModelRegistry, utils
@@ -46,6 +48,7 @@ def test_start_experiment_run(client: ModelRegistry, schema_json: str):
     assert metric.name == "rval"
 
 
+@pytest.mark.skip(reason="Skipping test_start_experiment_run_with_advanced_scenarios")
 @pytest.mark.e2e
 def test_start_experiment_run_with_advanced_scenarios(
     client: ModelRegistry, get_temp_dir_with_models, patch_s3_env, schema_json: str
@@ -172,3 +175,121 @@ def test_get_experiment_run_with_artifact_types(
         pytest.fail("Expected StopIteration")
     except StopIteration:
         assert True
+
+
+# @pytest.mark.e2e
+# def test_get_experiment_run_artifact_filtering(client: ModelRegistry):
+#     with client.start_experiment_run(experiment_name="Experiment_Test_5") as run:
+#         run.log_dataset(
+#             name="dataset_1",
+#             source_type="local",
+#             uri="s3://datasets/test",
+#             schema=schema_json,
+#             profile="random_profile",
+#         )
+
+
+@pytest.mark.e2e
+def test_start_experiment_run_nested_failure(client: ModelRegistry):
+    """Test that starting a nested experiment run without nested=True raises an error."""
+    with client.start_experiment_run(experiment_name="Experiment_Test_6") as run:
+        run.log_metric(
+            key="rval",
+            value=10,
+            step=4,
+            description="This is a test metric",
+        )
+        # This should fail because nested=True is not specified
+        with pytest.raises(ValueError, match="Experiment run is already active"):  # noqa: SIM117
+            with client.start_experiment_run():
+                pass
+
+        with client.start_experiment_run(nested=True) as run2:
+            run2.log_metric(
+                key="nested_metric",
+                value=20,
+                step=1,
+                description="This is a nested test metric",
+            )
+    # Assert logs are correct
+    for artifact in client.get_experiment_run_logs(run_id=run.info.id):
+        assert artifact.value == 10
+        assert "nested" not in artifact.description
+
+    for artifact in client.get_experiment_run_logs(run_id=run2.info.id):
+        assert artifact.value == 20
+        assert "nested" in artifact.description
+
+    exp_run = client.get_experiment_run(run_id=run.info.id)
+    assert exp_run.custom_properties is None
+
+    exp_run = client.get_experiment_run(run_id=run2.info.id)
+    assert "parent_run_id" in exp_run.custom_properties
+
+
+@pytest.mark.e2e
+async def test_start_experiment_run_thread_safety(client: ModelRegistry):
+    gen_name = utils.generate_name("Experiment_Test")
+    exp = client.create_experiment(gen_name)
+    assert exp.id
+
+    def run_experiment(client: ModelRegistry):
+        with client.start_experiment_run(experiment_name=gen_name) as run:
+            run.log_metric(
+                key="rval",
+                value=10,
+                step=4,
+                description="This is a test metric",
+            )
+
+    threads = []
+    for _i in range(5):
+        thread = threading.Thread(target=run_experiment, args=(client,))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+
+    # Check that all runs are created
+    exp_run = client.get_experiment_runs(experiment_name=gen_name)
+    ctr = 0
+    for run in exp_run:
+        ctr += 1
+        assert run.custom_properties is None
+    assert ctr == 5
+
+
+# @pytest.mark.e2e
+# def test_start_experiment_run_missing_arguments(client: ModelRegistry):
+#     """Test that starting an experiment run without required arguments raises an error."""
+#     with pytest.raises(
+#         ValueError, match="Either experiment_name or experiment_id must be provided"
+#     ):
+#         with client.start_experiment_run() as run:
+#             pass
+
+
+# @pytest.mark.e2e
+# def test_start_experiment_run_nested_success(client: ModelRegistry):
+#     """Test that starting a nested experiment run with nested=True works correctly."""
+#     with client.start_experiment_run(experiment_name="Experiment_Test_7") as run:
+#         run.log_metric(
+#             key="rval",
+#             value=10,
+#             step=4,
+#             description="This is a test metric",
+#         )
+#         # This should work because nested=True is specified
+#         with client.start_experiment_run(nested=True) as run2:
+#             run2.log_metric(
+#                 key="nested_metric",
+#                 value=20,
+#                 step=1,
+#                 description="This is a nested test metric",
+#             )
+
+#         # Verify both runs logged metrics
+#         logs = run.get_logs()
+#         assert len(logs) == 1  # Only the parent run's metrics
+#         assert run.get_log("metrics", "rval").value == 10

@@ -479,9 +479,11 @@ class ModelRegistryAPIClient:
         async with self.get_client() as client:
             if experiment.id:
                 exp = await client.update_experiment(experiment.id, experiment.update())
-            else:
-                exp = await client.create_experiment(experiment.create())
-
+            elif experiment.name:
+                if exp := await self.get_experiment_by_name(experiment.name):
+                    exp = await client.update_experiment(exp.id, experiment.update())
+                else:
+                    exp = await client.create_experiment(experiment.create())
         return Experiment.from_basemodel(exp)
 
     async def get_experiment_by_name(self, name: str) -> Experiment | None:
@@ -492,13 +494,11 @@ class ModelRegistryAPIClient:
         """
         async with self.get_client() as client:
             try:
-                exp = await client.get_experiments()
-                for e in exp.items or []:
-                    if e.name == name:
-                        return Experiment.from_basemodel(e)
+                exp = await client.find_experiment(name=name)
             except mr_exceptions.NotFoundException:
                 return None
-        return None
+
+        return Experiment.from_basemodel(exp)
 
     async def get_experiment_by_id(self, id: str | int) -> Experiment | None:
         """Fetch an experiment by its ID.
@@ -608,7 +608,7 @@ class ModelRegistryAPIClient:
         experiment_name: str | None = None,
         experiment_id: str | int | None = None,
     ) -> ExperimentRun:
-        """Fetch experiment runs by experiment name / ID and the run ID.
+        """Fetch experiment run by experiment name / ID and the run ID.
 
         Args:
             run_id: Run ID.
@@ -624,7 +624,7 @@ class ModelRegistryAPIClient:
                 if experiment_name:
                     exp = await self.get_experiment_by_name(experiment_name)
                 elif experiment_id:
-                    exp = await self.get_experiment_by_id(experiment_id)
+                    exp = await self.get_experiment_by_id(str(experiment_id))
                 else:
                     msg = "Either experiment_name or experiment_id must be provided"
                     raise ValueError(msg)
@@ -667,6 +667,20 @@ class ModelRegistryAPIClient:
                     return None
 
                 exp_run = await client.get_experiment_run(exp.id)
+            except mr_exceptions.NotFoundException:
+                return None
+
+        return ExperimentRun.from_basemodel(exp_run)
+
+    async def get_experiment_run_by_id(self, id: str) -> ExperimentRun:
+        """Fetch an experiment run by its ID.
+
+        Args:
+            id: Experiment run ID.
+        """
+        async with self.get_client() as client:
+            try:
+                exp_run = await client.get_experiment_run(id)
             except mr_exceptions.NotFoundException:
                 return None
 
