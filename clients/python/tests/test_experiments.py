@@ -190,7 +190,7 @@ def test_get_experiment_run_with_artifact_types(
 
 
 @pytest.mark.e2e
-def test_start_experiment_run_nested_failure(client: ModelRegistry):
+def test_start_experiment_run_nested(client: ModelRegistry):
     """Test that starting a nested experiment run without nested=True raises an error."""
     with client.start_experiment_run(experiment_name="Experiment_Test_6") as run:
         run.log_metric(
@@ -222,9 +222,14 @@ def test_start_experiment_run_nested_failure(client: ModelRegistry):
 
     exp_run = client.get_experiment_run(run_id=run.info.id)
     assert exp_run.custom_properties is None
+    assert exp_run.experiment_id == run.info.experiment_id
 
     exp_run = client.get_experiment_run(run_id=run2.info.id)
-    assert "parent_run_id" in exp_run.custom_properties
+    assert "kubeflow.parent_run_id" in exp_run.custom_properties
+    assert exp_run.custom_properties["kubeflow.parent_run_id"] == run.info.id
+    assert exp_run.experiment_id == run.info.experiment_id
+    assert exp_run.name == run2.info.name
+    assert exp_run.id == run2.info.id
 
 
 @pytest.mark.e2e
@@ -260,36 +265,56 @@ async def test_start_experiment_run_thread_safety(client: ModelRegistry):
     assert ctr == 5
 
 
-# @pytest.mark.e2e
-# def test_start_experiment_run_missing_arguments(client: ModelRegistry):
-#     """Test that starting an experiment run without required arguments raises an error."""
-#     with pytest.raises(
-#         ValueError, match="Either experiment_name or experiment_id must be provided"
-#     ):
-#         with client.start_experiment_run() as run:
-#             pass
+@pytest.mark.e2e
+async def test_start_experiment_run_nested_thread_safety(client: ModelRegistry):
+    gen_name = utils.generate_name("Experiment_Test")
+    exp = client.create_experiment(gen_name)
+    assert exp.id
+
+    def run_experiment(client: ModelRegistry):
+        with client.start_experiment_run(experiment_name=gen_name) as run:
+            run.log_metric(
+                key="rval",
+                value=10,
+                step=4,
+                description="This is a test metric",
+            )
+            with client.start_experiment_run(nested=True) as run2:
+                run2.log_metric(
+                    key="rval",
+                    value=20,
+                    step=55,
+                    description="This is a nested run test metric",
+                )
+
+    threads = []
+    for _i in range(5):
+        thread = threading.Thread(target=run_experiment, args=(client,))
+        threads.append(thread)
+        thread.start()
+
+    for thread in threads:
+        thread.join()
+
+    # Check that all runs are created
+    exp_run = client.get_experiment_runs(experiment_name=gen_name)
+    ctr = 0
+    for r in exp_run:
+        ctr += 1
+        if r.custom_properties:
+            if parent_id := r.custom_properties.get("kubeflow.parent_run_id"):
+                assert parent_id
+        else:
+            assert r.custom_properties is None
+
+    assert ctr == 10
 
 
-# @pytest.mark.e2e
-# def test_start_experiment_run_nested_success(client: ModelRegistry):
-#     """Test that starting a nested experiment run with nested=True works correctly."""
-#     with client.start_experiment_run(experiment_name="Experiment_Test_7") as run:
-#         run.log_metric(
-#             key="rval",
-#             value=10,
-#             step=4,
-#             description="This is a test metric",
-#         )
-#         # This should work because nested=True is specified
-#         with client.start_experiment_run(nested=True) as run2:
-#             run2.log_metric(
-#                 key="nested_metric",
-#                 value=20,
-#                 step=1,
-#                 description="This is a nested test metric",
-#             )
-
-#         # Verify both runs logged metrics
-#         logs = run.get_logs()
-#         assert len(logs) == 1  # Only the parent run's metrics
-#         assert run.get_log("metrics", "rval").value == 10
+@pytest.mark.e2e
+def test_start_experiment_run_missing_arguments(client: ModelRegistry):
+    """Test that starting an experiment run without required arguments raises an error."""
+    with pytest.raises(  # noqa: SIM117
+        ValueError, match="Either experiment_name or experiment_id must be provided"
+    ):
+        with client.start_experiment_run():
+            pass

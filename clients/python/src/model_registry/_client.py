@@ -647,6 +647,7 @@ class ModelRegistry:
         desc: str | None = None,
         run_desc: str | None = None,
         nested: bool = False,
+        nested_tag: str | None = "kubeflow.parent_run_id",
     ) -> ActiveExperimentRun:
         """Start an experiment run.
 
@@ -676,7 +677,7 @@ class ModelRegistry:
             msg = "Either experiment_name or experiment_id must be provided"
             raise ValueError(msg)
 
-        _parent_obj = {"parent_run_id": active_exp.run_id} if active_exp.active else {}
+        _parent_obj = {nested_tag: active_exp.run_id} if active_exp.active else {}
 
         # Create or retrieve the experiment
 
