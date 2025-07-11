@@ -1,16 +1,13 @@
 package mysql_test
 
 import (
-	"context"
-	"path/filepath"
+	"os"
 	"testing"
 
 	"github.com/kubeflow/model-registry/internal/datastore/embedmd/mysql"
-	_tls "github.com/kubeflow/model-registry/internal/tls"
+	"github.com/kubeflow/model-registry/internal/testutils"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/testcontainers/testcontainers-go"
-	cont_mysql "github.com/testcontainers/testcontainers-go/modules/mysql"
 	"gorm.io/gorm"
 )
 
@@ -40,37 +37,12 @@ func (TypeProperty) TableName() string {
 	return "TypeProperty"
 }
 
+func TestMain(m *testing.M) {
+	os.Exit(testutils.TestMainHelper(m))
+}
+
 func setupTestDB(t *testing.T) (*gorm.DB, func()) {
-	ctx := context.Background()
-
-	mysqlContainer, err := cont_mysql.Run(
-		ctx,
-		"mysql:5.7",
-		cont_mysql.WithUsername("root"),
-		cont_mysql.WithPassword("root"),
-		cont_mysql.WithDatabase("test"),
-		cont_mysql.WithConfigFile(filepath.Join("testdata", "testdb.cnf")),
-	)
-	require.NoError(t, err)
-
-	dbConnector := mysql.NewMySQLDBConnector(mysqlContainer.MustConnectionString(ctx), &_tls.TLSConfig{})
-	require.NoError(t, err)
-
-	db, err := dbConnector.Connect()
-	require.NoError(t, err)
-
-	// Return cleanup function
-	cleanup := func() {
-		sqlDB, err := db.DB()
-		require.NoError(t, err)
-		sqlDB.Close() //nolint:errcheck
-		err = testcontainers.TerminateContainer(
-			mysqlContainer,
-		)
-		require.NoError(t, err)
-	}
-
-	return db, cleanup
+	return testutils.GetSharedMySQLDB(t)
 }
 
 func TestMigrations(t *testing.T) {

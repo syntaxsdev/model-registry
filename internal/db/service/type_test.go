@@ -40,6 +40,12 @@ func TestTypeRepository(t *testing.T) {
 			defaults.ServeModelTypeName,
 			defaults.ModelArtifactTypeName,
 			defaults.DocArtifactTypeName,
+			defaults.ExperimentTypeName,
+			defaults.ExperimentRunTypeName,
+			defaults.DataSetTypeName,
+			defaults.MetricTypeName,
+			defaults.ParameterTypeName,
+			defaults.MetricHistoryTypeName,
 		}
 
 		for _, expectedType := range expectedTypes {

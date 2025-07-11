@@ -18,7 +18,10 @@ func TestArtifactRepository(t *testing.T) {
 	// Get the actual type IDs from the database
 	modelArtifactTypeID := getModelArtifactTypeID(t, db)
 	docArtifactTypeID := getDocArtifactTypeID(t, db)
-	repo := service.NewArtifactRepository(db, modelArtifactTypeID, docArtifactTypeID)
+	dataSetTypeID := getDataSetTypeID(t, db)
+	metricTypeID := getMetricTypeID(t, db)
+	parameterTypeID := getParameterTypeID(t, db)
+	repo := service.NewArtifactRepository(db, modelArtifactTypeID, docArtifactTypeID, dataSetTypeID, metricTypeID, parameterTypeID)
 
 	// Also get other type IDs for creating related entities
 	registeredModelTypeID := getRegisteredModelTypeID(t, db)
@@ -237,7 +240,7 @@ func TestArtifactRepository(t *testing.T) {
 
 		// Test listing by model version ID
 		listOptions = models.ArtifactListOptions{
-			ModelVersionID: savedModelVersion.GetID(),
+			ParentResourceID: savedModelVersion.GetID(),
 		}
 		listOptions.PageSize = &pageSize
 
@@ -473,7 +476,7 @@ func TestArtifactRepository(t *testing.T) {
 
 		// Test filtering by model version ID (should NOT include standalone artifacts)
 		listOptions = models.ArtifactListOptions{
-			ModelVersionID: savedModelVersion.GetID(),
+			ParentResourceID: savedModelVersion.GetID(),
 		}
 		listOptions.PageSize = &pageSize
 

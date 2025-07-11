@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/kubeflow/model-registry/internal/apiutils"
-	"github.com/kubeflow/model-registry/internal/core"
 	"github.com/kubeflow/model-registry/pkg/api"
 	"github.com/kubeflow/model-registry/pkg/openapi"
 	"github.com/stretchr/testify/assert"
@@ -14,7 +13,7 @@ import (
 )
 
 func TestUpsertModelVersion(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful create", func(t *testing.T) {
@@ -430,7 +429,7 @@ func TestUpsertModelVersion(t *testing.T) {
 }
 
 func TestGetModelVersionById(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful get", func(t *testing.T) {
@@ -485,7 +484,7 @@ func TestGetModelVersionById(t *testing.T) {
 }
 
 func TestGetModelVersionByInferenceService(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful get with specific model version", func(t *testing.T) {
@@ -597,7 +596,7 @@ func TestGetModelVersionByInferenceService(t *testing.T) {
 }
 
 func TestGetModelVersionByParams(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful get by name and registered model id", func(t *testing.T) {
@@ -676,7 +675,7 @@ func TestGetModelVersionByParams(t *testing.T) {
 }
 
 func TestGetModelVersions(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful list", func(t *testing.T) {
@@ -803,7 +802,7 @@ func TestGetModelVersions(t *testing.T) {
 }
 
 func TestModelVersionRoundTrip(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("complete roundtrip", func(t *testing.T) {

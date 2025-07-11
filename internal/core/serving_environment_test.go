@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/kubeflow/model-registry/internal/apiutils"
-	"github.com/kubeflow/model-registry/internal/core"
 	"github.com/kubeflow/model-registry/pkg/api"
 	"github.com/kubeflow/model-registry/pkg/openapi"
 	"github.com/stretchr/testify/assert"
@@ -13,7 +12,7 @@ import (
 )
 
 func TestUpsertServingEnvironment(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful create", func(t *testing.T) {
@@ -296,7 +295,7 @@ func TestUpsertServingEnvironment(t *testing.T) {
 }
 
 func TestGetServingEnvironmentById(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful get", func(t *testing.T) {
@@ -340,7 +339,7 @@ func TestGetServingEnvironmentById(t *testing.T) {
 }
 
 func TestGetServingEnvironmentByParams(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful get by name", func(t *testing.T) {
@@ -398,7 +397,7 @@ func TestGetServingEnvironmentByParams(t *testing.T) {
 }
 
 func TestGetServingEnvironments(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful list", func(t *testing.T) {
@@ -473,7 +472,7 @@ func TestGetServingEnvironments(t *testing.T) {
 }
 
 func TestServingEnvironmentRoundTrip(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("complete roundtrip", func(t *testing.T) {

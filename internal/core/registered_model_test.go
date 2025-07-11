@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/kubeflow/model-registry/internal/apiutils"
-	"github.com/kubeflow/model-registry/internal/core"
 	"github.com/kubeflow/model-registry/pkg/api"
 	"github.com/kubeflow/model-registry/pkg/openapi"
 	"github.com/stretchr/testify/assert"
@@ -13,7 +12,7 @@ import (
 )
 
 func TestUpsertRegisteredModel(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful create", func(t *testing.T) {
@@ -323,7 +322,7 @@ func TestUpsertRegisteredModel(t *testing.T) {
 }
 
 func TestGetRegisteredModelById(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful get", func(t *testing.T) {
@@ -369,7 +368,7 @@ func TestGetRegisteredModelById(t *testing.T) {
 }
 
 func TestGetRegisteredModelByInferenceService(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful get", func(t *testing.T) {
@@ -422,7 +421,7 @@ func TestGetRegisteredModelByInferenceService(t *testing.T) {
 }
 
 func TestGetRegisteredModelByParams(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful get by name", func(t *testing.T) {
@@ -496,7 +495,7 @@ func TestGetRegisteredModelByParams(t *testing.T) {
 }
 
 func TestGetRegisteredModels(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("successful list", func(t *testing.T) {
@@ -571,7 +570,7 @@ func TestGetRegisteredModels(t *testing.T) {
 }
 
 func TestRegisteredModelRoundTrip(t *testing.T) {
-	service, cleanup := core.SetupModelRegistryService(t)
+	service, cleanup := SetupModelRegistryService(t)
 	defer cleanup()
 
 	t.Run("complete roundtrip", func(t *testing.T) {
