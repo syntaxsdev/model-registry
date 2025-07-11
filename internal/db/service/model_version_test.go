@@ -6,20 +6,10 @@ import (
 
 	"github.com/kubeflow/model-registry/internal/apiutils"
 	"github.com/kubeflow/model-registry/internal/db/models"
-	"github.com/kubeflow/model-registry/internal/db/schema"
 	"github.com/kubeflow/model-registry/internal/db/service"
-	"github.com/kubeflow/model-registry/internal/defaults"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gorm.io/gorm"
 )
-
-func getModelVersionTypeID(t *testing.T, db *gorm.DB) int64 {
-	var typeRecord schema.Type
-	err := db.Where("name = ?", defaults.ModelVersionTypeName).First(&typeRecord).Error
-	require.NoError(t, err, "Failed to find ModelVersion type")
-	return int64(typeRecord.ID)
-}
 
 func TestModelVersionRepository(t *testing.T) {
 	db, cleanup := setupTestDB(t)
@@ -79,6 +69,8 @@ func TestModelVersionRepository(t *testing.T) {
 		// Test updating the same model version
 		modelVersion.ID = saved.GetID()
 		modelVersion.GetAttributes().Name = apiutils.Of("updated-version")
+		// Preserve CreateTimeSinceEpoch from the saved entity (simulating what OpenAPI converter would do)
+		modelVersion.GetAttributes().CreateTimeSinceEpoch = saved.GetAttributes().CreateTimeSinceEpoch
 
 		updated, err := repo.Save(modelVersion)
 		require.NoError(t, err)

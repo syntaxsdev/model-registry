@@ -6,20 +6,10 @@ import (
 
 	"github.com/kubeflow/model-registry/internal/apiutils"
 	"github.com/kubeflow/model-registry/internal/db/models"
-	"github.com/kubeflow/model-registry/internal/db/schema"
 	"github.com/kubeflow/model-registry/internal/db/service"
-	"github.com/kubeflow/model-registry/internal/defaults"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gorm.io/gorm"
 )
-
-func getInferenceServiceTypeID(t *testing.T, db *gorm.DB) int64 {
-	var typeRecord schema.Type
-	err := db.Where("name = ?", defaults.InferenceServiceTypeName).First(&typeRecord).Error
-	require.NoError(t, err, "Failed to find InferenceService type")
-	return int64(typeRecord.ID)
-}
 
 func TestInferenceServiceRepository(t *testing.T) {
 	db, cleanup := setupTestDB(t)
@@ -103,6 +93,8 @@ func TestInferenceServiceRepository(t *testing.T) {
 		// Test updating the same inference service
 		inferenceService.ID = saved.GetID()
 		inferenceService.GetAttributes().Name = apiutils.Of("updated-inference-service")
+		// Preserve CreateTimeSinceEpoch from the saved entity (simulating what OpenAPI converter would do)
+		inferenceService.GetAttributes().CreateTimeSinceEpoch = saved.GetAttributes().CreateTimeSinceEpoch
 
 		updated, err := repo.Save(inferenceService)
 		require.NoError(t, err)
