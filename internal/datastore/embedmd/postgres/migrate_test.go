@@ -63,7 +63,7 @@ func setupTestDB(t *testing.T) (*gorm.DB, func()) {
 	// Construct the connection string in URL format
 	dsn := fmt.Sprintf("postgres://postgres:postgres@%s:%s/test?sslmode=disable",
 		host, port.Port())
-	
+
 	dbConnector := postgres.NewPostgresDBConnector(dsn, &_tls.TLSConfig{})
 
 	db, err := dbConnector.Connect()
@@ -133,4 +133,4 @@ func TestDownMigrations(t *testing.T) {
 	err = db.Raw("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name != 'schema_migrations'").Scan(&count).Error
 	require.NoError(t, err)
 	assert.Equal(t, int64(0), count)
-} 
+}
