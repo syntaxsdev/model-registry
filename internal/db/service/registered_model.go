@@ -2,9 +2,12 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
+	"github.com/kubeflow/model-registry/internal/db/filter"
 	"github.com/kubeflow/model-registry/internal/db/models"
 	"github.com/kubeflow/model-registry/internal/db/schema"
+	"github.com/kubeflow/model-registry/internal/db/scopes"
 	"gorm.io/gorm"
 )
 
@@ -48,7 +51,72 @@ func applyRegisteredModelListFilters(query *gorm.DB, listOptions *models.Registe
 	} else if listOptions.ExternalID != nil {
 		query = query.Where("external_id = ?", listOptions.ExternalID)
 	}
-	return query
+
+	// Apply filter query if provided
+	if filterQuery := listOptions.GetFilterQuery(); filterQuery != "" {
+		filterExpr, err := filter.Parse(filterQuery)
+		if err != nil {
+			return nil, fmt.Errorf("invalid filter query: %w", err)
+		}
+
+		if filterExpr != nil {
+			queryBuilder := filter.NewQueryBuilderForRestEntity(filter.RestEntityRegisteredModel)
+			query = queryBuilder.BuildQuery(query, filterExpr)
+		}
+	}
+
+	query = query.Scopes(scopes.Paginate(models, &listOptions.Pagination, r.db))
+
+	if err := query.Find(&modelsCtx).Error; err != nil {
+		return nil, fmt.Errorf("error listing models: %w", err)
+	}
+
+	hasMore := false
+	pageSize := listOptions.GetPageSize()
+	if pageSize > 0 {
+		hasMore = len(modelsCtx) > int(pageSize)
+		if hasMore {
+			modelsCtx = modelsCtx[:len(modelsCtx)-1]
+		}
+	}
+
+	for _, modelCtx := range modelsCtx {
+		propertiesCtx := []schema.ContextProperty{}
+		if err := r.db.Where("context_id = ?", modelCtx.ID).Find(&propertiesCtx).Error; err != nil {
+			return nil, fmt.Errorf("error getting properties for model %d: %w", modelCtx.ID, err)
+		}
+		model := mapDataLayerToRegisteredModel(modelCtx, propertiesCtx)
+		models = append(models, model)
+	}
+
+	if hasMore && len(modelsCtx) > 0 {
+		lastModel := modelsCtx[len(modelsCtx)-1]
+		orderBy := listOptions.GetOrderBy()
+		value := ""
+		if orderBy != "" {
+			switch orderBy {
+			case "ID":
+				value = fmt.Sprintf("%d", lastModel.ID)
+			case "CREATE_TIME":
+				value = fmt.Sprintf("%d", lastModel.CreateTimeSinceEpoch)
+			case "LAST_UPDATE_TIME":
+				value = fmt.Sprintf("%d", lastModel.LastUpdateTimeSinceEpoch)
+			default:
+				value = fmt.Sprintf("%d", lastModel.ID)
+			}
+		}
+		nextToken := scopes.CreateNextPageToken(lastModel.ID, value)
+		listOptions.NextPageToken = &nextToken
+	} else {
+		listOptions.NextPageToken = nil
+	}
+
+	list.Items = models
+	list.NextPageToken = listOptions.GetNextPageToken()
+	list.PageSize = listOptions.GetPageSize()
+	list.Size = int32(len(models))
+
+	return &list, nil
 }
 
 func mapRegisteredModelToContext(model models.RegisteredModel) schema.Context {

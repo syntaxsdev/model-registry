@@ -2,7 +2,9 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
+	"github.com/kubeflow/model-registry/internal/db/filter"
 	"github.com/kubeflow/model-registry/internal/db/models"
 	"github.com/kubeflow/model-registry/internal/db/schema"
 	"gorm.io/gorm"
@@ -57,6 +59,19 @@ func applyModelVersionListFilters(query *gorm.DB, listOptions *models.ModelVersi
 		query = query.Where("name = ?", listOptions.Name)
 	} else if listOptions.ExternalID != nil {
 		query = query.Where("external_id = ?", listOptions.ExternalID)
+	}
+
+	// Apply filter query if provided
+	if filterQuery := listOptions.GetFilterQuery(); filterQuery != "" {
+		filterExpr, err := filter.Parse(filterQuery)
+		if err != nil {
+			return nil, fmt.Errorf("invalid filter query: %w", err)
+		}
+
+		if filterExpr != nil {
+			queryBuilder := filter.NewQueryBuilderForRestEntity(filter.RestEntityModelVersion)
+			query = queryBuilder.BuildQuery(query, filterExpr)
+		}
 	}
 
 	if listOptions.ParentResourceID != nil {

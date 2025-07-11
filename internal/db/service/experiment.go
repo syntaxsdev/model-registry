@@ -2,9 +2,12 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
+	"github.com/kubeflow/model-registry/internal/db/filter"
 	"github.com/kubeflow/model-registry/internal/db/models"
 	"github.com/kubeflow/model-registry/internal/db/schema"
+	"github.com/kubeflow/model-registry/internal/db/scopes"
 	"gorm.io/gorm"
 )
 
@@ -48,7 +51,72 @@ func applyExperimentListFilters(query *gorm.DB, listOptions *models.ExperimentLi
 	} else if listOptions.ExternalID != nil {
 		query = query.Where("external_id = ?", listOptions.ExternalID)
 	}
-	return query
+
+	// Apply filter query if provided
+	if filterQuery := listOptions.GetFilterQuery(); filterQuery != "" {
+		filterExpr, err := filter.Parse(filterQuery)
+		if err != nil {
+			return nil, fmt.Errorf("invalid filter query: %w", err)
+		}
+
+		if filterExpr != nil {
+			queryBuilder := filter.NewQueryBuilderForRestEntity(filter.RestEntityExperiment)
+			query = queryBuilder.BuildQuery(query, filterExpr)
+		}
+	}
+
+	query = query.Scopes(scopes.Paginate(experiments, &listOptions.Pagination, r.db))
+
+	if err := query.Find(&experimentsCtx).Error; err != nil {
+		return nil, fmt.Errorf("error listing experiments: %w", err)
+	}
+
+	hasMore := false
+	pageSize := listOptions.GetPageSize()
+	if pageSize > 0 {
+		hasMore = len(experimentsCtx) > int(pageSize)
+		if hasMore {
+			experimentsCtx = experimentsCtx[:len(experimentsCtx)-1]
+		}
+	}
+
+	for _, expCtx := range experimentsCtx {
+		propertiesCtx := []schema.ContextProperty{}
+		if err := r.db.Where("context_id = ?", expCtx.ID).Find(&propertiesCtx).Error; err != nil {
+			return nil, fmt.Errorf("error getting properties for experiment %d: %w", expCtx.ID, err)
+		}
+		experiment := mapDataLayerToExperiment(expCtx, propertiesCtx)
+		experiments = append(experiments, experiment)
+	}
+
+	if hasMore && len(experimentsCtx) > 0 {
+		lastExperiment := experimentsCtx[len(experimentsCtx)-1]
+		orderBy := listOptions.GetOrderBy()
+		value := ""
+		if orderBy != "" {
+			switch orderBy {
+			case "ID":
+				value = fmt.Sprintf("%d", lastExperiment.ID)
+			case "CREATE_TIME":
+				value = fmt.Sprintf("%d", lastExperiment.CreateTimeSinceEpoch)
+			case "LAST_UPDATE_TIME":
+				value = fmt.Sprintf("%d", lastExperiment.LastUpdateTimeSinceEpoch)
+			default:
+				value = fmt.Sprintf("%d", lastExperiment.ID)
+			}
+		}
+		nextToken := scopes.CreateNextPageToken(lastExperiment.ID, value)
+		listOptions.NextPageToken = &nextToken
+	} else {
+		listOptions.NextPageToken = nil
+	}
+
+	list.Items = experiments
+	list.NextPageToken = listOptions.GetNextPageToken()
+	list.PageSize = listOptions.GetPageSize()
+	list.Size = int32(len(experiments))
+
+	return &list, nil
 }
 
 func mapExperimentToContext(experiment models.Experiment) schema.Context {

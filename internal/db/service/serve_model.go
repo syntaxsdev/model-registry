@@ -2,7 +2,9 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
+	"github.com/kubeflow/model-registry/internal/db/filter"
 	"github.com/kubeflow/model-registry/internal/db/models"
 	"github.com/kubeflow/model-registry/internal/db/schema"
 	"gorm.io/gorm"
@@ -47,6 +49,20 @@ func applyServeModelListFilters(query *gorm.DB, listOptions *models.ServeModelLi
 		query = query.Where("Execution.name = ?", listOptions.Name)
 	} else if listOptions.ExternalID != nil {
 		query = query.Where("Execution.external_id = ?", listOptions.ExternalID)
+	}
+
+	// Apply filter query if provided
+	if filterQuery := listOptions.GetFilterQuery(); filterQuery != "" {
+		filterExpr, err := filter.Parse(filterQuery)
+		if err != nil {
+			return nil, fmt.Errorf("invalid filter query: %w", err)
+		}
+
+		if filterExpr != nil {
+			// Use REST entity-aware query builder for proper property validation
+			queryBuilder := filter.NewQueryBuilderForRestEntity(filter.RestEntityServeModel)
+			query = queryBuilder.BuildQuery(query, filterExpr)
+		}
 	}
 
 	if listOptions.InferenceServiceID != nil {
