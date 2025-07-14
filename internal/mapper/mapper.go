@@ -47,76 +47,76 @@ func (m *Mapper) MapFromModelVersion(modelVersion *openapi.ModelVersion, registe
 	})
 }
 
-func (m *Mapper) MapFromModelArtifact(modelArtifact *openapi.ModelArtifact, parentResourceId *string) (*proto.Artifact, error) {
+func (m *Mapper) MapFromModelArtifact(modelArtifact *openapi.ModelArtifact, modelVersionId *string) (*proto.Artifact, error) {
 	return m.OpenAPIConverter.ConvertModelArtifact(&converter.OpenAPIModelWrapper[openapi.ModelArtifact]{
 		TypeId:           m.MLMDTypes[defaults.ModelArtifactTypeName],
 		Model:            modelArtifact,
-		ParentResourceId: parentResourceId,
+		ParentResourceId: modelVersionId,
 	})
 }
 
-func (m *Mapper) MapFromDocArtifact(docArtifact *openapi.DocArtifact, parentResourceId *string) (*proto.Artifact, error) {
+func (m *Mapper) MapFromDocArtifact(docArtifact *openapi.DocArtifact, modelVersionId *string) (*proto.Artifact, error) {
 	return m.OpenAPIConverter.ConvertDocArtifact(&converter.OpenAPIModelWrapper[openapi.DocArtifact]{
 		TypeId:           m.MLMDTypes[defaults.DocArtifactTypeName],
 		Model:            docArtifact,
-		ParentResourceId: parentResourceId,
+		ParentResourceId: modelVersionId,
 	})
 }
 
-func (m *Mapper) MapFromDataSet(dataSet *openapi.DataSet, parentResourceId *string) (*proto.Artifact, error) {
+func (m *Mapper) MapFromDataSet(dataSet *openapi.DataSet, modelVersionId *string) (*proto.Artifact, error) {
 	return m.OpenAPIConverter.ConvertDataSet(&converter.OpenAPIModelWrapper[openapi.DataSet]{
 		TypeId:           m.MLMDTypes[defaults.DataSetTypeName],
 		Model:            dataSet,
-		ParentResourceId: parentResourceId,
+		ParentResourceId: modelVersionId,
 	})
 }
 
-func (m *Mapper) MapFromMetricArtifact(metric *openapi.Metric, parentResourceId *string) (*proto.Artifact, error) {
+func (m *Mapper) MapFromMetricArtifact(metric *openapi.Metric, modelVersionId *string) (*proto.Artifact, error) {
 	return m.OpenAPIConverter.ConvertMetric(&converter.OpenAPIModelWrapper[openapi.Metric]{
 		TypeId:           m.MLMDTypes[defaults.MetricTypeName],
 		Model:            metric,
-		ParentResourceId: parentResourceId,
+		ParentResourceId: modelVersionId,
 	})
 }
 
-func (m *Mapper) MapFromParameter(parameter *openapi.Parameter, parentResourceId *string) (*proto.Artifact, error) {
+func (m *Mapper) MapFromParameter(parameter *openapi.Parameter, modelVersionId *string) (*proto.Artifact, error) {
 	return m.OpenAPIConverter.ConvertParameter(&converter.OpenAPIModelWrapper[openapi.Parameter]{
 		TypeId:           m.MLMDTypes[defaults.ParameterTypeName],
 		Model:            parameter,
-		ParentResourceId: parentResourceId,
+		ParentResourceId: modelVersionId,
 	})
 }
 
-func (m *Mapper) MapFromArtifact(artifact *openapi.Artifact, parentResourceId *string) (*proto.Artifact, error) {
+func (m *Mapper) MapFromArtifact(artifact *openapi.Artifact, modelVersionId *string) (*proto.Artifact, error) {
 	if artifact == nil {
 		return nil, fmt.Errorf("invalid artifact pointer, can't map from nil")
 	}
 	if artifact.ModelArtifact != nil {
-		return m.MapFromModelArtifact(artifact.ModelArtifact, parentResourceId)
+		return m.MapFromModelArtifact(artifact.ModelArtifact, modelVersionId)
 	}
 	if artifact.DocArtifact != nil {
-		return m.MapFromDocArtifact(artifact.DocArtifact, parentResourceId)
+		return m.MapFromDocArtifact(artifact.DocArtifact, modelVersionId)
 	}
 	if artifact.DataSet != nil {
-		return m.MapFromDataSet(artifact.DataSet, parentResourceId)
+		return m.MapFromDataSet(artifact.DataSet, modelVersionId)
 	}
 	if artifact.Metric != nil {
-		return m.MapFromMetricArtifact(artifact.Metric, parentResourceId)
+		return m.MapFromMetricArtifact(artifact.Metric, modelVersionId)
 	}
 	if artifact.Parameter != nil {
-		return m.MapFromParameter(artifact.Parameter, parentResourceId)
+		return m.MapFromParameter(artifact.Parameter, modelVersionId)
 	}
 	// TODO: print type on error
 	return nil, fmt.Errorf("unknown artifact type")
 }
 
-func (m *Mapper) MapFromModelArtifacts(modelArtifacts []openapi.ModelArtifact, parentResourceId *string) ([]*proto.Artifact, error) {
+func (m *Mapper) MapFromModelArtifacts(modelArtifacts []openapi.ModelArtifact, modelVersionId *string) ([]*proto.Artifact, error) {
 	artifacts := []*proto.Artifact{}
 	if modelArtifacts == nil {
 		return artifacts, nil
 	}
 	for _, a := range modelArtifacts {
-		mapped, err := m.MapFromModelArtifact(&a, parentResourceId)
+		mapped, err := m.MapFromModelArtifact(&a, modelVersionId)
 		if err != nil {
 			return nil, err
 		}

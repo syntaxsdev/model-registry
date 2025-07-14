@@ -3,11 +3,8 @@ package core
 import (
 	"context"
 	"fmt"
-	"strconv"
-	"strings"
-	"time"
-
 	"github.com/golang/glog"
+	"strings"
 
 	"github.com/kubeflow/model-registry/internal/apiutils"
 	"github.com/kubeflow/model-registry/internal/converter"
@@ -115,11 +112,10 @@ func (serv *ModelRegistryService) InsertMetricHistory(metric *openapi.Metric, ex
 	// Create a copy of the metric for history
 	metricHistory := *metric
 
-	// Generate a unique name with the metric last update time since epoch to avoid duplicates
-	timestamp := metric.LastUpdateTimeSinceEpoch
+	// Generate a unique name for the metric history with either the metric timestamp or the metric last update time
+	timestamp := metric.Timestamp
 	if timestamp == nil {
-		// fallback to the current time if the last update time since epoch is not set
-		timestamp = apiutils.Of(strconv.FormatInt(time.Now().UnixMilli(), 10))
+		timestamp = metric.LastUpdateTimeSinceEpoch // use the metric last update time since epoch if the timestamp is not set
 	}
 	metricHistory.Name = apiutils.StrPtr(fmt.Sprintf("%s__%s", *metric.Name, *timestamp))
 
