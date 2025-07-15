@@ -137,7 +137,7 @@ func TestMySQLDBConnector_Connect_Secure(t *testing.T) {
 	// Start MySQL container with SSL enabled using built-in SSL support
 	mysqlContainer, err := cont_mysql.Run(
 		ctx,
-		"mysql:8.0",
+		"mysql:8.3",
 		cont_mysql.WithUsername("root"),
 		cont_mysql.WithPassword("testpass"),
 		cont_mysql.WithDatabase("testdb"),
