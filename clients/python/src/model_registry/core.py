@@ -162,8 +162,10 @@ class ModelRegistryAPIClient:
                 )
             except mr_exceptions.NotFoundException:
                 return None
-
-        return RegisteredModel.from_basemodel(rm)
+        rmf = RegisteredModel.from_basemodel(rm)
+        if not rmf.description:
+            del rmf.description
+        return rmf
 
     async def get_registered_models(
         self, options: ListOptions | None = None
