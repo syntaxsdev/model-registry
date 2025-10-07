@@ -11,7 +11,9 @@ API version: v1alpha1
 package openapi
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 )
 
 // checks if the CatalogSourceList type satisfies the MappedNullable interface at compile time
@@ -28,6 +30,8 @@ type CatalogSourceList struct {
 	// Array of `CatalogSource` entities.
 	Items []CatalogSource `json:"items,omitempty"`
 }
+
+type _CatalogSourceList CatalogSourceList
 
 // NewCatalogSourceList instantiates a new CatalogSourceList object
 // This constructor will assign default values to properties that have it defined,
@@ -170,6 +174,45 @@ func (o CatalogSourceList) ToMap() (map[string]interface{}, error) {
 		toSerialize["items"] = o.Items
 	}
 	return toSerialize, nil
+}
+
+func (o *CatalogSourceList) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"nextPageToken",
+		"pageSize",
+		"size",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err
+	}
+
+	for _, requiredProperty := range requiredProperties {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varCatalogSourceList := _CatalogSourceList{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varCatalogSourceList)
+
+	if err != nil {
+		return err
+	}
+
+	*o = CatalogSourceList(varCatalogSourceList)
+
+	return err
 }
 
 type NullableCatalogSourceList struct {

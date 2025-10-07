@@ -11,7 +11,9 @@ API version: v1alpha1
 package openapi
 
 import (
+	"bytes"
 	"encoding/json"
+	"fmt"
 )
 
 // checks if the CatalogModel type satisfies the MappedNullable interface at compile time
@@ -39,7 +41,7 @@ type CatalogModel struct {
 	LicenseLink *string `json:"licenseLink,omitempty"`
 	LibraryName *string `json:"libraryName,omitempty"`
 	// User provided custom properties which are not defined by its type.
-	CustomProperties *map[string]MetadataValue `json:"customProperties,omitempty"`
+	CustomProperties map[string]MetadataValue `json:"customProperties,omitempty"`
 	// The external id that come from the clients’ system. This field is optional. If set, it must be unique among all resources within a database instance.
 	ExternalId *string `json:"externalId,omitempty"`
 	// Name of the model. Must be unique within a source.
@@ -53,6 +55,8 @@ type CatalogModel struct {
 	// ID of the source this model belongs to.
 	SourceId *string `json:"source_id,omitempty"`
 }
+
+type _CatalogModel CatalogModel
 
 // NewCatalogModel instantiates a new CatalogModel object
 // This constructor will assign default values to properties that have it defined,
@@ -398,14 +402,14 @@ func (o *CatalogModel) GetCustomProperties() map[string]MetadataValue {
 		var ret map[string]MetadataValue
 		return ret
 	}
-	return *o.CustomProperties
+	return o.CustomProperties
 }
 
 // GetCustomPropertiesOk returns a tuple with the CustomProperties field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CatalogModel) GetCustomPropertiesOk() (*map[string]MetadataValue, bool) {
+func (o *CatalogModel) GetCustomPropertiesOk() (map[string]MetadataValue, bool) {
 	if o == nil || IsNil(o.CustomProperties) {
-		return nil, false
+		return map[string]MetadataValue{}, false
 	}
 	return o.CustomProperties, true
 }
@@ -421,7 +425,7 @@ func (o *CatalogModel) HasCustomProperties() bool {
 
 // SetCustomProperties gets a reference to the given map[string]MetadataValue and assigns it to the CustomProperties field.
 func (o *CatalogModel) SetCustomProperties(v map[string]MetadataValue) {
-	o.CustomProperties = &v
+	o.CustomProperties = v
 }
 
 // GetExternalId returns the ExternalId field value if set, zero value otherwise.
@@ -668,6 +672,43 @@ func (o CatalogModel) ToMap() (map[string]interface{}, error) {
 		toSerialize["source_id"] = o.SourceId
 	}
 	return toSerialize, nil
+}
+
+func (o *CatalogModel) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"name",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err
+	}
+
+	for _, requiredProperty := range requiredProperties {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varCatalogModel := _CatalogModel{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varCatalogModel)
+
+	if err != nil {
+		return err
+	}
+
+	*o = CatalogModel(varCatalogModel)
+
+	return err
 }
 
 type NullableCatalogModel struct {
