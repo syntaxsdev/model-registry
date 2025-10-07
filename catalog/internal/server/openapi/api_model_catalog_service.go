@@ -57,6 +57,11 @@ func (c *ModelCatalogServiceAPIController) Routes() Routes {
 			"/api/model_catalog/v1alpha1/models",
 			c.FindModels,
 		},
+		"FindModelsFilterOptions": Route{
+			strings.ToUpper("Get"),
+			"/api/model_catalog/v1alpha1/models/filter_options",
+			c.FindModelsFilterOptions,
+		},
 		"FindSources": Route{
 			strings.ToUpper("Get"),
 			"/api/model_catalog/v1alpha1/sources",
@@ -64,7 +69,7 @@ func (c *ModelCatalogServiceAPIController) Routes() Routes {
 		},
 		"GetModel": Route{
 			strings.ToUpper("Get"),
-			"/api/model_catalog/v1alpha1/sources/{source_id}/models/*",
+			"/api/model_catalog/v1alpha1/sources/{source_id}/models/{model_name+}",
 			c.GetModel,
 		},
 		"GetAllModelArtifacts": Route{
@@ -79,12 +84,26 @@ func (c *ModelCatalogServiceAPIController) Routes() Routes {
 func (c *ModelCatalogServiceAPIController) FindModels(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	sourceParam := strings.Split(query.Get("source"), ",")
+	sourceLabelParam := query.Get("sourceLabel")
 	qParam := query.Get("q")
 	pageSizeParam := query.Get("pageSize")
 	orderByParam := query.Get("orderBy")
 	sortOrderParam := query.Get("sortOrder")
 	nextPageTokenParam := query.Get("nextPageToken")
-	result, err := c.service.FindModels(r.Context(), sourceParam, qParam, pageSizeParam, model.OrderByField(orderByParam), model.SortOrder(sortOrderParam), nextPageTokenParam)
+	filterQueryParam := query.Get("filterQuery")
+	result, err := c.service.FindModels(r.Context(), sourceParam, sourceLabelParam, qParam, pageSizeParam, model.OrderByField(orderByParam), model.SortOrder(sortOrderParam), nextPageTokenParam, filterQueryParam)
+	// If an error occurred, encode the error with the status code
+	if err != nil {
+		c.errorHandler(w, r, err, &result)
+		return
+	}
+	// If no error, encode the body and the result code
+	EncodeJSONResponse(result.Body, &result.Code, w)
+}
+
+// FindModelsFilterOptions - Lists fields and available options that can be used in `filterQuery` on the list models endpoint.
+func (c *ModelCatalogServiceAPIController) FindModelsFilterOptions(w http.ResponseWriter, r *http.Request) {
+	result, err := c.service.FindModelsFilterOptions(r.Context())
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
@@ -115,7 +134,7 @@ func (c *ModelCatalogServiceAPIController) FindSources(w http.ResponseWriter, r 
 // GetModel - Get a `CatalogModel`.
 func (c *ModelCatalogServiceAPIController) GetModel(w http.ResponseWriter, r *http.Request) {
 	sourceIdParam := chi.URLParam(r, "source_id")
-	modelNameParam := chi.URLParam(r, "*")
+	modelNameParam := chi.URLParam(r, "model_name+")
 	result, err := c.service.GetModel(r.Context(), sourceIdParam, modelNameParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
@@ -135,7 +154,8 @@ func (c *ModelCatalogServiceAPIController) GetAllModelArtifacts(w http.ResponseW
 	orderByParam := query.Get("orderBy")
 	sortOrderParam := query.Get("sortOrder")
 	nextPageTokenParam := query.Get("nextPageToken")
-	result, err := c.service.GetAllModelArtifacts(r.Context(), sourceIdParam, modelNameParam, pageSizeParam, model.OrderByField(orderByParam), model.SortOrder(sortOrderParam), nextPageTokenParam)
+	artifactTypeParam := query.Get("artifactType")
+	result, err := c.service.GetAllModelArtifacts(r.Context(), sourceIdParam, modelNameParam, pageSizeParam, model.OrderByField(orderByParam), model.SortOrder(sortOrderParam), nextPageTokenParam, artifactTypeParam)
 	// If an error occurred, encode the error with the status code
 	if err != nil {
 		c.errorHandler(w, r, err, &result)
