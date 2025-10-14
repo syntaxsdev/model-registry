@@ -63,14 +63,6 @@ const initIntercepts = ({
   );
 
   cy.interceptApi(
-<<<<<<< HEAD
-    `GET /api/:apiVersion/model_catalog/models/filter_options`,
-    {
-      path: { apiVersion: MODEL_CATALOG_API_VERSION },
-      query: { namespace: 'kubeflow' },
-    },
-    mockCatalogFilterOptionsList(),
-=======
     `GET /api/:apiVersion/model_catalog/sources/:sourceId/artifacts/:modelName`,
     {
       path: {
@@ -86,7 +78,6 @@ const initIntercepts = ({
         mockCatalogModelArtifact({}),
       ],
     },
->>>>>>> f7c278eb3524b762a15a4b9264c9db1a05ce7014
   );
 };
 
