@@ -48,6 +48,7 @@ func TestDBCatalog(t *testing.T) {
 		catalogArtifactRepo,
 		modelArtifactRepo,
 		metricsArtifactRepo,
+		service.NewPropertyOptionsRepository(sharedDB),
 	)
 
 	// Create DB catalog instance
@@ -558,7 +559,7 @@ func TestDBCatalog(t *testing.T) {
 		// Test GetArtifacts
 		params := ListArtifactsParams{
 			PageSize:      10,
-			OrderBy:       model.ORDERBYFIELD_CREATE_TIME,
+			OrderBy:       string(model.ORDERBYFIELD_CREATE_TIME),
 			SortOrder:     model.SORTORDER_ASC,
 			NextPageToken: apiutils.Of(""),
 		}
@@ -600,7 +601,7 @@ func TestDBCatalog(t *testing.T) {
 		// Test with non-existent model
 		params := ListArtifactsParams{
 			PageSize:      10,
-			OrderBy:       model.ORDERBYFIELD_CREATE_TIME,
+			OrderBy:       string(model.ORDERBYFIELD_CREATE_TIME),
 			SortOrder:     model.SORTORDER_ASC,
 			NextPageToken: apiutils.Of(""),
 		}
@@ -649,7 +650,7 @@ func TestDBCatalog(t *testing.T) {
 		// Get artifacts and verify custom properties
 		params := ListArtifactsParams{
 			PageSize:      10,
-			OrderBy:       model.ORDERBYFIELD_CREATE_TIME,
+			OrderBy:       string(model.ORDERBYFIELD_CREATE_TIME),
 			SortOrder:     model.SORTORDER_ASC,
 			NextPageToken: apiutils.Of(""),
 		}
@@ -791,7 +792,7 @@ func TestDBCatalog(t *testing.T) {
 			// For now, let's test a scenario where the model exists but has some issue
 			params := ListArtifactsParams{
 				PageSize:      10,
-				OrderBy:       model.ORDERBYFIELD_CREATE_TIME,
+				OrderBy:       string(model.ORDERBYFIELD_CREATE_TIME),
 				SortOrder:     model.SORTORDER_ASC,
 				NextPageToken: apiutils.Of(""),
 			}
@@ -863,6 +864,9 @@ func TestDBCatalog(t *testing.T) {
 		require.NoError(t, err)
 		_, err = catalogModelRepo.Save(model3)
 		require.NoError(t, err)
+
+		require.NoError(t, dbCatalog.(*dbCatalogImpl).propertyOptionsRepository.Refresh(models.ContextPropertyOptionType))
+		require.NoError(t, dbCatalog.(*dbCatalogImpl).propertyOptionsRepository.Refresh(models.ArtifactPropertyOptionType))
 
 		// Test GetFilterOptions
 		filterOptions, err := dbCatalog.GetFilterOptions(ctx)
@@ -1127,7 +1131,7 @@ func TestDBCatalog(t *testing.T) {
 				params := ListArtifactsParams{
 					FilterQuery:   tt.filterQuery,
 					PageSize:      10,
-					OrderBy:       model.ORDERBYFIELD_CREATE_TIME,
+					OrderBy:       string(model.ORDERBYFIELD_CREATE_TIME),
 					SortOrder:     model.SORTORDER_ASC,
 					NextPageToken: apiutils.Of(""),
 				}
