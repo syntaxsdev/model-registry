@@ -15,7 +15,7 @@ test-e2e-odh:
 	export VERIFY_SSL=False && \
 	export MR_NAMESPACE=$$(kubectl get datasciencecluster default-dsc -o jsonpath='{.spec.components.modelregistry.registriesNamespace}') && \
 	export MR_URL="https://$$(kubectl get service -n "$$MR_NAMESPACE" model-registry -o jsonpath='{.metadata.annotations.routing\.opendatahub\.io\/external-address-rest}')" && \
-	poetry install --all-extras && poetry run pytest --e2e -svvv -rA --html=../../results/report.html --junit-xml=../../results/xunit_report.xml --self-contained-html -o junit_suite_name=odh-model-registry&& \
+	poetry install --all-extras && poetry run pytest --e2e -svvv -rA --html=../../results/report.html --junit-xml=../../results/xunit_report.xml --self-contained-html -o junit_suite_name=odh-model-registry && \
 	rm -f ../../scripts/manifests/minio/.env
 
 .PHONY: test-e2e-port-cleanup
