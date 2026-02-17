@@ -95,6 +95,12 @@ module.exports = smp.wrap(
             changeOrigin: true,
             headers: getProxyHeaders(),
           },
+          {
+            context: ['/mlflow-api'],
+            target: 'http://localhost:5001',
+            changeOrigin: true,
+            pathRewrite: { '^/mlflow-api': '' },
+          },
         ],
         devMiddleware: {
           stats: 'errors-only',

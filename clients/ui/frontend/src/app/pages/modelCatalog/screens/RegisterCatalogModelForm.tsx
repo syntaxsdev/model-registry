@@ -11,7 +11,6 @@ import {
   isModelNameExisting,
   isNameValid,
   isRegisterCatalogModelSubmitDisabled,
-  registerModel,
 } from '~/app/pages/modelRegistry/screens/RegisterModel/utils';
 import { SubmitLabel } from '~/app/pages/modelRegistry/screens/RegisterModel/const';
 import RegisterModelDetailsFormSection from '~/app/pages/modelRegistry/screens/RegisterModel/RegisterModelDetailsFormSection';
@@ -22,6 +21,7 @@ import useRegisteredModels from '~/app/hooks/useRegisteredModels';
 import useUser from '~/app/hooks/useUser';
 import ModelRegistrySelector from '~/app/pages/modelRegistry/screens/ModelRegistrySelector';
 import { registeredModelUrl } from '~/app/pages/modelRegistry/screens/routeUtils';
+import { registerModelToMlflow } from '~/app/api/mlflow/registerModelToMlflow';
 import {
   catalogParamsToModelSourceProperties,
   getLabelsFromModelTasks,
@@ -119,22 +119,16 @@ const RegisterCatalogModelForm: React.FC<RegisterCatalogModelFormProps> = ({
       return;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (!apiState.api) {
-      setSubmitError(new Error('Model registry API is not available'));
-      setIsSubmitting(false);
-      return;
-    }
-
     try {
-      const {
-        data: { registeredModel, modelVersion, modelArtifact },
-        errors,
-      } = await registerModel(apiState, formData, user.userId || 'user');
+      const { registeredModel, modelVersion, errors } = await registerModelToMlflow(
+        formData,
+        user.userId || 'user',
+      );
 
-      if (registeredModel && modelVersion && modelArtifact) {
-        const navigationPath = registeredModelUrl(registeredModel.id, preferredModelRegistry.name);
-        navigate(navigationPath);
+      if (registeredModel && modelVersion && Object.keys(errors).length === 0) {
+        // Registration succeeded — navigate to the MLflow UI for this model
+        window.location.href = `http://localhost:5001/#/models/${encodeURIComponent(registeredModel.name)}`;
+        return;
       } else if (Object.keys(errors).length > 0) {
         setIsSubmitting(false);
         setSubmittedRegisteredModelName(formData.modelName);
@@ -144,7 +138,7 @@ const RegisterCatalogModelForm: React.FC<RegisterCatalogModelFormProps> = ({
         setSubmitError(errors[resourceName]);
       }
     } catch (error) {
-      setSubmitError(error instanceof Error ? error : new Error('Registration failed'));
+      setSubmitError(error instanceof Error ? error : new Error('MLflow registration failed'));
       setIsSubmitting(false);
     }
   };
